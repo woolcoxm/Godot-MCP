@@ -368,6 +368,16 @@ export class SceneParser {
   }
 
   private static parseArray(arrayStr: string): any[] {
+    // Handle case where arrayStr is already an array
+    if (Array.isArray(arrayStr)) {
+      return arrayStr;
+    }
+    
+    // Handle case where arrayStr is not a string
+    if (typeof arrayStr !== 'string') {
+      return [];
+    }
+    
     const content = arrayStr.substring(1, arrayStr.length - 1).trim();
     if (!content) return [];
     

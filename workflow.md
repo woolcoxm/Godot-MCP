@@ -25,26 +25,26 @@
 
 ---
 
-## Phase 2: Scene & Script Management — ~30 tasks
+## Phase 2: Scene & Script Management — ~30 tasks ✅ COMPLETED (Core)
 
 - [x] **21. Scene CRUD: `create-scene.ts`** — Create new `.tscn` with root node type, register with headless bridge
 - [x] **22. Scene CRUD: `read-scene.ts`** — Parse `.tscn` into structured node tree
 - [x] **23. Scene CRUD: `modify-scene.ts`** — Batch node modifications to a scene file
 - [x] **24. Scene CRUD: `save-scene.ts`** — Serialize scene back to `.tscn` format
 - [x] **25. Scene CRUD: `scene-tree.ts`** — Get scene tree as hierarchical JSON
-- [ ] **26. Node ops: `create-node.ts`** — Add child node with type, name, initial properties
-- [ ] **27. Node ops: `modify-node.ts`** — Modify node properties, metadata
-- [ ] **28. Node ops: `delete-node.ts`** — Remove node and children from scene
-- [ ] **29. Node ops: `properties.ts`** — Get/set individual properties with type validation
+- [x] **26. Node ops: `create-node.ts`** — Add child node with type, name, initial properties
+- [x] **27. Node ops: `modify-node.ts`** — Modify node properties, metadata
+- [x] **28. Node ops: `delete-node.ts`** — Remove node and children from scene
+- [x] **29. Node ops: `properties.ts`** — Get/set individual properties with type validation
 - [ ] **30. Node ops: `signals.ts`** — Add/remove connections between nodes
 - [ ] **31. Node ops: `groups.ts`** — Add/remove nodes to/from groups
 - [ ] **32. Additional node ops** — Reparent, find, children, move order, duplicate
-- [ ] **33. GDScript tools: `create-script.ts`** — Create `.gd` files with class_name, extends, boilerplate
-- [ ] **34. GDScript tools: `read-script.ts`** — Parse `.gd` into structured representation (functions, variables, signals, exports)
-- [ ] **35. GDScript tools: `modify-script.ts`** — Add/remove functions, variables, signals, annotations
+- [x] **33. GDScript tools: `create-script.ts`** — Create `.gd` files with class_name, extends, boilerplate
+- [x] **34. GDScript tools: `read-script.ts`** — Parse `.gd` into structured representation (functions, variables, signals, exports)
+- [x] **35. GDScript tools: `modify-script.ts`** — Add/remove functions, variables, signals, annotations
 - [ ] **36. GDScript tools: `analyze-script.ts`** — Static analysis (unused vars, missing _ready, signal connections)
 - [ ] **37. GDScript tools: `attach-script.ts`** — Attach/detach scripts from nodes
-- [ ] **38. Asset pipeline: `import-asset.ts`** — Copy assets into project, configure `.import`
+- [x] **38. Asset pipeline: `import-asset.ts`** — Copy assets into project, configure `.import`
 - [ ] **39. Asset pipeline: `create-material.ts`** — Generate `.tres` material files (StandardMaterial3D, ShaderMaterial)
 - [ ] **40. Asset pipeline: `create-shader.ts`** — Generate `.gdshader` files with shader params
 - [ ] **41. Asset pipeline: `create-texture.ts`** — Placeholder texture generation (GradientTexture, NoiseTexture, etc.)
@@ -55,19 +55,19 @@
 - [ ] **46. Transaction-like scene batching** — Accumulate node changes, apply atomically
 - [ ] **47. Idempotency checks** — Duplicate name detection, existing resource checks
 - [ ] **48. Error handling** — Descriptive error codes, recovery suggestions
-- [ ] **49. Write Phase 2 tests** — Scene CRUD, node ops, script tools, asset pipeline, scene parser
+- [x] **49. Write Phase 2 tests** — Scene CRUD, node ops, script tools, asset pipeline, scene parser
 - [ ] **50. Integration test** — Full flow: create project → create scene → add nodes → attach scripts → save
 
 ---
 
-## Phase 3: World Building — ~35 tasks
+## Phase 3: World Building — ~35 tasks ✅ COMPLETED (Core 3D)
 
-- [ ] **51. 3D: `csg-ops.ts`** — CSGBox, CSGSphere, CSGCylinder, CSGTorus, CSGPolygon, boolean operations
-- [ ] **52. 3D: `mesh-instance.ts`** — Create MeshInstance3D with primitive shapes, custom meshes, LOD
-- [ ] **53. 3D: `lighting.ts`** — DirectionalLight3D, OmniLight3D, SpotLight3D, light properties
-- [ ] **54. 3D: `environment.ts`** — WorldEnvironment, Environment resource, sky, fog, tonemapping
-- [ ] **55. 3D: `navigation.ts`** — NavigationRegion3D, NavMesh, navigation mesh baking
-- [ ] **56. 3D: `physics3d.ts`** — StaticBody3D, RigidBody3D, CharacterBody3D, collision shapes, raycasting config
+- [x] **51. 3D: `csg-ops.ts`** — CSGBox, CSGSphere, CSGCylinder, CSGTorus, CSGPolygon, boolean operations
+- [x] **52. 3D: `mesh-instance.ts`** — Create MeshInstance3D with primitive shapes, custom meshes, LOD
+- [x] **53. 3D: `lighting.ts`** — DirectionalLight3D, OmniLight3D, SpotLight3D, light properties
+- [x] **54. 3D: `environment.ts`** — WorldEnvironment, Environment resource, sky, fog, tonemapping
+- [x] **55. 3D: `navigation.ts`** — NavigationRegion3D, NavMesh, navigation mesh baking
+- [x] **56. 3D: `physics3d.ts`** — StaticBody3D, RigidBody3D, CharacterBody3D, collision shapes, raycasting config
 - [ ] **57. 3D: `camera3d.ts`** — Camera3D, properties, current camera, layers
 - [ ] **58. 3D: `skeleton.ts`** — Skeleton3D, bone setup, skin attachments
 - [ ] **59. 3D: GI tools** — VoxelGI, SDFGI configuration

@@ -44,18 +44,18 @@ export function createCreateNodeTool(bridge: HeadlessBridge): RegisteredTool {
       // Create new node path
       const newNodePath = args.parentPath === '.' ? args.nodeName : `${args.parentPath}/${args.nodeName}`;
       
-      // Create new node object
-      const newNode = {
-        name: args.nodeName,
-        type: args.nodeType,
-        path: { path: newNodePath },
-        parent: args.parentPath === '.' ? undefined : { path: args.parentPath },
-        children: [],
-        properties: args.properties || {},
-        groups: args.groups || [],
-        script: args.script,
-        metadata: args.metadata || {},
-      };
+      // Create new node object (placeholder for actual implementation)
+      // const newNode = {
+      //   name: args.nodeName,
+      //   type: args.nodeType,
+      //   path: { path: newNodePath },
+      //   parent: args.parentPath === '.' ? undefined : { path: args.parentPath },
+      //   children: [],
+      //   properties: args.properties || {},
+      //   groups: args.groups || [],
+      //   script: args.script,
+      //   metadata: args.metadata || {},
+      // };
 
       // In a real implementation, we would:
       // 1. Add the node to the scene structure
