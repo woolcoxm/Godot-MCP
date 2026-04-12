@@ -157,6 +157,9 @@ export interface SceneInfo {
   resources: ResourceInfo[];
   sub_resources: SubResourceInfo[];
   connections: ConnectionInfo[];
+  format?: number;
+  load_steps?: number;
+  uid?: string;
 }
 
 export interface ResourceInfo {
@@ -199,6 +202,8 @@ export interface SignalDefinition {
 export interface ArgumentDefinition {
   name: string;
   type: string;
+  hint?: string;
+  hint_string?: string;
 }
 
 export interface VariableDefinition {

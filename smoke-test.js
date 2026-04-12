@@ -1,5 +1,5 @@
 // Simple smoke test to verify the server can be imported and instantiated
-import { GodotMCPServer } from './dist/index.js';
+const { GodotMCPServer } = require('./dist/index.js');
 
 console.log('Starting Godot MCP Server smoke test...');
 

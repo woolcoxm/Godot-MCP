@@ -2,10 +2,14 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { logger } from './utils/logger.js';
 import { ToolRegistry } from './tools/registry.js';
+import { HeadlessBridge } from './transports/headless-bridge.js';
+import { registerAllTools } from './tools/register-tools.js';
 
 export class GodotMCPServer {
   private server: McpServer;
   private transport: StdioServerTransport | null = null;
+  private bridge: HeadlessBridge;
+  private registry: ToolRegistry;
 
   constructor() {
     this.server = new McpServer({
@@ -13,8 +17,14 @@ export class GodotMCPServer {
       version: '1.0.0',
     });
 
-    // Initialize tool registry which registers all tools
-    new ToolRegistry(this.server);
+    // Initialize headless bridge
+    this.bridge = new HeadlessBridge();
+    
+    // Initialize tool registry
+    this.registry = new ToolRegistry(this.server);
+    
+    // Register all tools
+    registerAllTools(this.registry, this.bridge);
 
     this.setupServerInstructions();
     this.setupErrorHandling();
