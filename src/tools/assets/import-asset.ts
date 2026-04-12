@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const importAssetSchema = z.object({
   sourcePath: z.string().describe('Local path to the asset file'),
@@ -9,7 +9,7 @@ const importAssetSchema = z.object({
   importSettings: z.record(z.string(), z.any()).optional().describe('Import settings for the asset'),
 });
 
-export function createImportAssetTool(bridge: HeadlessBridge): RegisteredTool {
+export function createImportAssetTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_import_asset',
     name: 'Import Asset',
@@ -24,7 +24,7 @@ export function createImportAssetTool(bridge: HeadlessBridge): RegisteredTool {
       // For now, simulate the operation
       
       // Simulate file copy operation
-      const copyOperation: HeadlessOperation = {
+      const copyOperation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.targetPath,
@@ -32,7 +32,7 @@ export function createImportAssetTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const copyResult = await bridge.execute(copyOperation);
+      const copyResult = await transport.execute(copyOperation);
       
       if (!copyResult.success) {
         throw new Error(`Failed to copy asset: ${copyResult.error}`);
@@ -43,7 +43,7 @@ export function createImportAssetTool(bridge: HeadlessBridge): RegisteredTool {
         const importFilePath = args.targetPath + '.import';
         const importContent = generateImportFile(args.importSettings, args.assetType);
         
-        const importOperation: HeadlessOperation = {
+        const importOperation: TransportOperation = {
           operation: 'write_file',
           params: {
             path: importFilePath,
@@ -51,7 +51,7 @@ export function createImportAssetTool(bridge: HeadlessBridge): RegisteredTool {
           },
         };
 
-        const importResult = await bridge.execute(importOperation);
+        const importResult = await transport.execute(importOperation);
         
         if (!importResult.success) {
           throw new Error(`Failed to create .import file: ${importResult.error}`);

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const physics3dSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/level.tscn")'),
@@ -67,7 +67,7 @@ const physics3dSchema = z.object({
   }).optional().describe('Initial transform'),
 });
 
-export function createPhysics3DTool(bridge: HeadlessBridge): RegisteredTool {
+export function createPhysics3DTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_physics3d',
     name: '3D Physics',
@@ -76,12 +76,12 @@ export function createPhysics3DTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: physics3dSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -95,23 +95,23 @@ export function createPhysics3DTool(bridge: HeadlessBridge): RegisteredTool {
       
       switch (args.action) {
         case 'create_body':
-          result = await createPhysicsBody(bridge, args);
+          result = await createPhysicsBody(transport, args);
           break;
           
         case 'create_shape':
-          result = await createCollisionShape(bridge, args);
+          result = await createCollisionShape(transport, args);
           break;
           
         case 'configure_raycast':
-          result = await configureRaycast(bridge, args);
+          result = await configureRaycast(transport, args);
           break;
           
         case 'configure_area':
-          result = await configureArea(bridge, args);
+          result = await configureArea(transport, args);
           break;
           
         case 'configure_joint':
-          result = await configureJoint(bridge, args);
+          result = await configureJoint(transport, args);
           break;
           
         default:
@@ -125,7 +125,7 @@ export function createPhysics3DTool(bridge: HeadlessBridge): RegisteredTool {
   };
 }
 
-async function createPhysicsBody(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createPhysicsBody(_transport: Transport, args: any): Promise<any> {
   if (!args.bodyType) {
     throw new Error('bodyType is required for create_body action');
   }
@@ -150,7 +150,7 @@ async function createPhysicsBody(_bridge: HeadlessBridge, args: any): Promise<an
   };
 }
 
-async function createCollisionShape(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createCollisionShape(_transport: Transport, args: any): Promise<any> {
   if (!args.shapeType) {
     throw new Error('shapeType is required for create_shape action');
   }
@@ -174,7 +174,7 @@ async function createCollisionShape(_bridge: HeadlessBridge, args: any): Promise
   };
 }
 
-async function configureRaycast(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function configureRaycast(_transport: Transport, args: any): Promise<any> {
   const nodePath = args.parentPath === '.' ? args.name : `${args.parentPath}/${args.name}`;
   
   // In a real implementation, we would:
@@ -191,7 +191,7 @@ async function configureRaycast(_bridge: HeadlessBridge, args: any): Promise<any
   };
 }
 
-async function configureArea(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function configureArea(_transport: Transport, args: any): Promise<any> {
   const nodePath = args.parentPath === '.' ? args.name : `${args.parentPath}/${args.name}`;
   
   // In a real implementation, we would:
@@ -209,7 +209,7 @@ async function configureArea(_bridge: HeadlessBridge, args: any): Promise<any> {
   };
 }
 
-async function configureJoint(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function configureJoint(_transport: Transport, args: any): Promise<any> {
   if (!args.jointType) {
     throw new Error('jointType is required for configure_joint action');
   }

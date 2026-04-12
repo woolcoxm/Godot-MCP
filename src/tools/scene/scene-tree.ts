@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const sceneTreeSchema = z.object({
@@ -11,7 +11,7 @@ const sceneTreeSchema = z.object({
   includeGroups: z.boolean().default(true).describe('Include node groups'),
 });
 
-export function createSceneTreeTool(bridge: HeadlessBridge): RegisteredTool {
+export function createSceneTreeTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_scene_tree',
     name: 'Get Scene Tree',
@@ -20,12 +20,12 @@ export function createSceneTreeTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: sceneTreeSchema,
     handler: async (args) => {
       // Read the scene
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.path },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);

@@ -1,5 +1,5 @@
 import { ToolRegistry } from './registry.js';
-import { HeadlessBridge } from '../transports/headless-bridge.js';
+import { Transport } from '../transports/transport.js';
 import { createCreateSceneTool } from './scene/create-scene.js';
 import { createReadSceneTool } from './scene/read-scene.js';
 import { createModifySceneTool } from './scene/modify-scene.js';
@@ -20,37 +20,103 @@ import { createLightingTool } from './3d/lighting.js';
 import { createEnvironmentTool } from './3d/environment.js';
 import { createNavigationTool } from './3d/navigation.js';
 import { createPhysics3DTool } from './3d/physics3d.js';
+import { createCamera3DTool } from './3d/camera3d.js';
+import { createSkeletonTool } from './3d/skeleton.js';
+import { createVoxelGITool } from './3d/voxelgi.js';
+import { createGridmapTool } from './3d/gridmap.js';
+import { createMultimeshTool } from './3d/multimesh.js';
+import { createPath3DTool } from './3d/path3d.js';
+import { createParticles3DTool } from './3d/particles3d.js';
+import { createTilemapTool } from './2d/tilemap.js';
+import { createSprite2DTool } from './2d/sprite2d.js';
+import { createPhysics2DTool } from './2d/physics2d.js';
+import { createParallaxTool } from './2d/parallax.js';
+import { createReflectionProbeTool } from './3d/reflection-probe.js';
+import { createViewportTool } from './3d/viewport.js';
+import { createCanvasTool } from './2d/canvas.js';
+import { createLight2DTool } from './2d/light2d.js';
+import { createPath2DTool } from './2d/path2d.js';
+import { createPolygonTool } from './2d/polygon.js';
+import { createSkeleton2DTool } from './2d/skeleton2d.js';
+import { createParticles2DTool } from './2d/particles2d.js';
+import { createTilesetEditorTool } from './2d/tileset-editor.js';
+import { createNavigation2DTool } from './2d/navigation2d.js';
+import { createAnimationPlayerTool } from './animation/animation-player.js';
+import { createAnimationTreeTool } from './animation/animation-tree.js';
+import { createTweeningTool } from './animation/tweening.js';
+import { createEvalTool } from './runtime/eval.js';
+import { createSimulateInputTool } from './runtime/input-simulation.js';
+import { createScreenshotTool } from './runtime/screenshot.js';
+import { createDebugInfoTool } from './runtime/debug.js';
+import { createGameStateTool } from './runtime/state.js';
 
-export function registerAllTools(registry: ToolRegistry, bridge: HeadlessBridge): void {
+export function registerAllTools(registry: ToolRegistry, transport: Transport): void {
   // Project tools
-  registry.registerTool(createCreateProjectTool(bridge));
+  registry.registerTool(createCreateProjectTool(transport));
   
   // Scene tools
-  registry.registerTool(createCreateSceneTool(bridge));
-  registry.registerTool(createReadSceneTool(bridge));
-  registry.registerTool(createModifySceneTool(bridge));
-  registry.registerTool(createSaveSceneTool(bridge));
-  registry.registerTool(createSceneTreeTool(bridge));
+  registry.registerTool(createCreateSceneTool(transport));
+  registry.registerTool(createReadSceneTool(transport));
+  registry.registerTool(createModifySceneTool(transport));
+  registry.registerTool(createSaveSceneTool(transport));
+  registry.registerTool(createSceneTreeTool(transport));
   
   // Node tools
-  registry.registerTool(createCreateNodeTool(bridge));
-  registry.registerTool(createModifyNodeTool(bridge));
-  registry.registerTool(createDeleteNodeTool(bridge));
-  registry.registerTool(createNodePropertiesTool(bridge));
+  registry.registerTool(createCreateNodeTool(transport));
+  registry.registerTool(createModifyNodeTool(transport));
+  registry.registerTool(createDeleteNodeTool(transport));
+  registry.registerTool(createNodePropertiesTool(transport));
   
   // Script tools
-  registry.registerTool(createCreateScriptTool(bridge));
-  registry.registerTool(createReadScriptTool(bridge));
-  registry.registerTool(createModifyScriptTool(bridge));
+  registry.registerTool(createCreateScriptTool(transport));
+  registry.registerTool(createReadScriptTool(transport));
+  registry.registerTool(createModifyScriptTool(transport));
   
   // Asset tools
-  registry.registerTool(createImportAssetTool(bridge));
+  registry.registerTool(createImportAssetTool(transport));
   
   // 3D tools
-  registry.registerTool(createCSGOpsTool(bridge));
-  registry.registerTool(createMeshInstanceTool(bridge));
-  registry.registerTool(createLightingTool(bridge));
-  registry.registerTool(createEnvironmentTool(bridge));
-  registry.registerTool(createNavigationTool(bridge));
-  registry.registerTool(createPhysics3DTool(bridge));
+  registry.registerTool(createCSGOpsTool(transport));
+  registry.registerTool(createMeshInstanceTool(transport));
+  registry.registerTool(createLightingTool(transport));
+  registry.registerTool(createEnvironmentTool(transport));
+  registry.registerTool(createNavigationTool(transport));
+  registry.registerTool(createPhysics3DTool(transport));
+  registry.registerTool(createCamera3DTool(transport));
+  registry.registerTool(createSkeletonTool(transport));
+  registry.registerTool(createVoxelGITool(transport));
+  registry.registerTool(createGridmapTool(transport));
+  registry.registerTool(createMultimeshTool(transport));
+  registry.registerTool(createPath3DTool(transport));
+  registry.registerTool(createParticles3DTool(transport));
+  
+  // 2D tools
+  registry.registerTool(createTilemapTool(transport));
+  registry.registerTool(createSprite2DTool(transport));
+  registry.registerTool(createPhysics2DTool(transport));
+  registry.registerTool(createParallaxTool(transport));
+  registry.registerTool(createCanvasTool(transport));
+  registry.registerTool(createLight2DTool(transport));
+  registry.registerTool(createPath2DTool(transport));
+  registry.registerTool(createPolygonTool(transport));
+  registry.registerTool(createSkeleton2DTool(transport));
+  registry.registerTool(createParticles2DTool(transport));
+  registry.registerTool(createTilesetEditorTool(transport));
+  registry.registerTool(createNavigation2DTool(transport));
+  
+  // 3D additional tools
+  registry.registerTool(createReflectionProbeTool(transport));
+  registry.registerTool(createViewportTool(transport));
+  
+  // Animation tools
+  registry.registerTool(createAnimationPlayerTool(transport));
+  registry.registerTool(createAnimationTreeTool(transport));
+  registry.registerTool(createTweeningTool(transport));
+  
+  // Runtime tools
+  registry.registerTool(createEvalTool(transport));
+  registry.registerTool(createSimulateInputTool(transport));
+  registry.registerTool(createScreenshotTool(transport));
+  registry.registerTool(createDebugInfoTool(transport));
+  registry.registerTool(createGameStateTool(transport));
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const createNodeSchema = z.object({
@@ -14,7 +14,7 @@ const createNodeSchema = z.object({
   metadata: z.record(z.string(), z.any()).optional().describe('Metadata to attach to the node'),
 });
 
-export function createCreateNodeTool(bridge: HeadlessBridge): RegisteredTool {
+export function createCreateNodeTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_create_node',
     name: 'Create Node in Scene',
@@ -23,12 +23,12 @@ export function createCreateNodeTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: createNodeSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -67,7 +67,7 @@ export function createCreateNodeTool(bridge: HeadlessBridge): RegisteredTool {
       const updatedContent = SceneParser.serializeScene(sceneInfo);
       
       // Write back to file
-      const writeOperation: HeadlessOperation = {
+      const writeOperation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.scenePath,
@@ -75,7 +75,7 @@ export function createCreateNodeTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const writeResult = await bridge.execute(writeOperation);
+      const writeResult = await transport.execute(writeOperation);
       
       if (!writeResult.success) {
         throw new Error(`Failed to save scene: ${writeResult.error}`);

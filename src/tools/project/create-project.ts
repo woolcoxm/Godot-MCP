@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const createProjectSchema = z.object({
   path: z.string().describe('Path where the project should be created'),
@@ -8,7 +8,7 @@ const createProjectSchema = z.object({
   template: z.enum(['empty', '3d', '2d']).default('empty').describe('Project template'),
 });
 
-export function createCreateProjectTool(bridge: HeadlessBridge): RegisteredTool {
+export function createCreateProjectTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_create_project',
     name: 'Create Godot Project',
@@ -16,7 +16,7 @@ export function createCreateProjectTool(bridge: HeadlessBridge): RegisteredTool 
     category: 'project',
     inputSchema: createProjectSchema,
     handler: async (args) => {
-      const operation: HeadlessOperation = {
+      const operation: TransportOperation = {
         operation: 'create_project',
         params: {
           path: args.path,
@@ -24,7 +24,7 @@ export function createCreateProjectTool(bridge: HeadlessBridge): RegisteredTool 
         },
       };
 
-      const result = await bridge.execute(operation);
+      const result = await transport.execute(operation);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to create project');

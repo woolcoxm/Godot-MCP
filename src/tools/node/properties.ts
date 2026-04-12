@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const nodePropertiesSchema = z.object({
@@ -11,7 +11,7 @@ const nodePropertiesSchema = z.object({
   propertyValue: z.any().optional().describe('Property value (required for set)'),
 });
 
-export function createNodePropertiesTool(bridge: HeadlessBridge): RegisteredTool {
+export function createNodePropertiesTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_node_properties',
     name: 'Get/Set Node Properties',
@@ -20,12 +20,12 @@ export function createNodePropertiesTool(bridge: HeadlessBridge): RegisteredTool
     inputSchema: nodePropertiesSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -77,7 +77,7 @@ export function createNodePropertiesTool(bridge: HeadlessBridge): RegisteredTool
           // Then serialize and save the scene
           const updatedContent = SceneParser.serializeScene(sceneInfo);
           
-          const writeOperation: HeadlessOperation = {
+          const writeOperation: TransportOperation = {
             operation: 'write_file',
             params: {
               path: args.scenePath,
@@ -85,7 +85,7 @@ export function createNodePropertiesTool(bridge: HeadlessBridge): RegisteredTool
             },
           };
 
-          const writeResult = await bridge.execute(writeOperation);
+          const writeResult = await transport.execute(writeOperation);
           
           if (!writeResult.success) {
             throw new Error(`Failed to save scene: ${writeResult.error}`);

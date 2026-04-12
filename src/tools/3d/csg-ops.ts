@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const csgOperationSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/level.tscn")'),
@@ -18,7 +18,7 @@ const csgOperationSchema = z.object({
   name: z.string().describe('Name for the new CSG node'),
 });
 
-export function createCSGOpsTool(bridge: HeadlessBridge): RegisteredTool {
+export function createCSGOpsTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_csg_ops',
     name: '3D CSG Operations',
@@ -27,12 +27,12 @@ export function createCSGOpsTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: csgOperationSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -47,15 +47,15 @@ export function createCSGOpsTool(bridge: HeadlessBridge): RegisteredTool {
       
       switch (args.operation) {
         case 'create':
-          result = await createCSGShape(bridge, args);
+          result = await createCSGShape(transport, args);
           break;
           
         case 'boolean':
-          result = await performBooleanOperation(bridge, args);
+          result = await performBooleanOperation(transport, args);
           break;
           
         case 'transform':
-          result = await transformCSGNode(bridge, args);
+          result = await transformCSGNode(transport, args);
           break;
           
         default:
@@ -69,7 +69,7 @@ export function createCSGOpsTool(bridge: HeadlessBridge): RegisteredTool {
   };
 }
 
-async function createCSGShape(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createCSGShape(_transport: Transport, args: any): Promise<any> {
   if (!args.csgType) {
     throw new Error('csgType is required for create operation');
   }
@@ -144,7 +144,7 @@ async function createCSGShape(_bridge: HeadlessBridge, args: any): Promise<any> 
   };
 }
 
-async function performBooleanOperation(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function performBooleanOperation(_transport: Transport, args: any): Promise<any> {
   if (!args.booleanOperation) {
     throw new Error('booleanOperation is required for boolean operation');
   }
@@ -169,7 +169,7 @@ async function performBooleanOperation(_bridge: HeadlessBridge, args: any): Prom
   };
 }
 
-async function transformCSGNode(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function transformCSGNode(_transport: Transport, args: any): Promise<any> {
   if (!args.transform) {
     throw new Error('transform is required for transform operation');
   }

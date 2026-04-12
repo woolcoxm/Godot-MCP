@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const createSceneSchema = z.object({
@@ -10,7 +10,7 @@ const createSceneSchema = z.object({
   initialProperties: z.record(z.string(), z.any()).optional().describe('Initial properties for the root node'),
 });
 
-export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
+export function createCreateSceneTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_create_scene',
     name: 'Create Godot Scene',
@@ -18,7 +18,7 @@ export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
     category: 'scene',
     inputSchema: createSceneSchema,
     handler: async (args) => {
-      const operation: HeadlessOperation = {
+      const operation: TransportOperation = {
         operation: 'create_scene',
         params: {
           path: args.path,
@@ -27,7 +27,7 @@ export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const result = await bridge.execute(operation);
+      const result = await transport.execute(operation);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to create scene');
@@ -36,12 +36,12 @@ export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
       // If initial properties were provided, modify the scene
       if (args.initialProperties && Object.keys(args.initialProperties).length > 0) {
         // Read the created scene
-        const readOperation: HeadlessOperation = {
+        const readOperation: TransportOperation = {
           operation: 'read_scene',
           params: { path: args.path },
         };
         
-        const readResult = await bridge.execute(readOperation);
+        const readResult = await transport.execute(readOperation);
         
         if (readResult.success && readResult.data?.content) {
           // Parse the scene
@@ -58,7 +58,7 @@ export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
             const updatedContent = SceneParser.serializeScene(sceneInfo);
             
             // Write back
-            const writeOperation: HeadlessOperation = {
+            const writeOperation: TransportOperation = {
               operation: 'write_file',
               params: {
                 path: args.path,
@@ -66,7 +66,7 @@ export function createCreateSceneTool(bridge: HeadlessBridge): RegisteredTool {
               },
             };
             
-            const writeResult = await bridge.execute(writeOperation);
+            const writeResult = await transport.execute(writeOperation);
             if (!writeResult.success) {
               throw new Error(`Failed to update scene properties: ${writeResult.error}`);
             }

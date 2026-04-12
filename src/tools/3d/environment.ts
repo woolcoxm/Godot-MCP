@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const environmentSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/level.tscn")'),
@@ -33,7 +33,7 @@ const environmentSchema = z.object({
   name: z.string().optional().describe('Name for the WorldEnvironment node (if creating)'),
 });
 
-export function createEnvironmentTool(bridge: HeadlessBridge): RegisteredTool {
+export function createEnvironmentTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_environment',
     name: 'Configure 3D Environment',
@@ -42,12 +42,12 @@ export function createEnvironmentTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: environmentSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -61,23 +61,23 @@ export function createEnvironmentTool(bridge: HeadlessBridge): RegisteredTool {
       
       switch (args.action) {
         case 'create_world':
-          result = await createWorldEnvironment(bridge, args);
+          result = await createWorldEnvironment(transport, args);
           break;
           
         case 'update_environment':
-          result = await updateEnvironment(bridge, args);
+          result = await updateEnvironment(transport, args);
           break;
           
         case 'create_sky':
-          result = await createSky(bridge, args);
+          result = await createSky(transport, args);
           break;
           
         case 'configure_fog':
-          result = await configureFog(bridge, args);
+          result = await configureFog(transport, args);
           break;
           
         case 'configure_tonemap':
-          result = await configureTonemap(bridge, args);
+          result = await configureTonemap(transport, args);
           break;
           
         default:
@@ -91,7 +91,7 @@ export function createEnvironmentTool(bridge: HeadlessBridge): RegisteredTool {
   };
 }
 
-async function createWorldEnvironment(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createWorldEnvironment(_transport: Transport, args: any): Promise<any> {
   const nodeName = args.name || 'WorldEnvironment';
   
   // In a real implementation, we would:
@@ -111,7 +111,7 @@ async function createWorldEnvironment(_bridge: HeadlessBridge, args: any): Promi
   };
 }
 
-async function updateEnvironment(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function updateEnvironment(_transport: Transport, args: any): Promise<any> {
   if (!args.properties) {
     throw new Error('properties are required for update_environment action');
   }
@@ -129,7 +129,7 @@ async function updateEnvironment(_bridge: HeadlessBridge, args: any): Promise<an
   };
 }
 
-async function createSky(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createSky(_transport: Transport, args: any): Promise<any> {
   // In a real implementation, we would:
   // 1. Create Sky resource
   // 2. Configure sky properties
@@ -144,7 +144,7 @@ async function createSky(_bridge: HeadlessBridge, args: any): Promise<any> {
   };
 }
 
-async function configureFog(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function configureFog(_transport: Transport, args: any): Promise<any> {
   // In a real implementation, we would:
   // 1. Update environment fog properties
   // 2. Save the scene
@@ -157,7 +157,7 @@ async function configureFog(_bridge: HeadlessBridge, args: any): Promise<any> {
   };
 }
 
-async function configureTonemap(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function configureTonemap(_transport: Transport, args: any): Promise<any> {
   // In a real implementation, we would:
   // 1. Update environment tonemapping properties
   // 2. Save the scene

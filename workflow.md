@@ -60,7 +60,7 @@
 
 ---
 
-## Phase 3: World Building — ~35 tasks ✅ COMPLETED (Core 3D)
+## Phase 3: World Building — ~35 tasks ✅ COMPLETED (Core 3D & 2D)
 
 - [x] **51. 3D: `csg-ops.ts`** — CSGBox, CSGSphere, CSGCylinder, CSGTorus, CSGPolygon, boolean operations
 - [x] **52. 3D: `mesh-instance.ts`** — Create MeshInstance3D with primitive shapes, custom meshes, LOD
@@ -68,30 +68,30 @@
 - [x] **54. 3D: `environment.ts`** — WorldEnvironment, Environment resource, sky, fog, tonemapping
 - [x] **55. 3D: `navigation.ts`** — NavigationRegion3D, NavMesh, navigation mesh baking
 - [x] **56. 3D: `physics3d.ts`** — StaticBody3D, RigidBody3D, CharacterBody3D, collision shapes, raycasting config
-- [ ] **57. 3D: `camera3d.ts`** — Camera3D, properties, current camera, layers
-- [ ] **58. 3D: `skeleton.ts`** — Skeleton3D, bone setup, skin attachments
-- [ ] **59. 3D: GI tools** — VoxelGI, SDFGI configuration
-- [ ] **60. 3D: GridMap tools** — GridMap with mesh library
-- [ ] **61. 3D: MultiMesh tools** — MultiMeshInstance3D for instancing
-- [ ] **62. 3D: Path3D tools** — Path3D, curve editing
-- [ ] **63. 3D: Particles3D** — GPUParticles3D configuration
-- [ ] **64. 3D: Reflection probes** — ReflectionProbe, probe configuration
-- [ ] **65. 3D: Viewport tools** — SubViewport, ViewportTexture
-- [ ] **66. 2D: `tilemap.ts`** — TileMap with TileSet, tile layers, patterns
-- [ ] **67. 2D: `sprite2d.ts`** — Sprite2D, AnimatedSprite2D, texture regions
-- [ ] **68. 2D: `physics2d.ts`** — StaticBody2D, RigidBody2D, CharacterBody2D, collision shapes
-- [ ] **69. 2D: `parallax.ts`** — ParallaxLayer, ParallaxBackground, mirroring
-- [ ] **70. 2D: `canvas.ts`** — CanvasLayer, layer ordering, custom drawing
-- [ ] **71. 2D: Light2D tools** — Light2D, shadows, blend mode
-- [ ] **72. 2D: Path2D tools** — Path2D, curve editing
-- [ ] **73. 2D: Polygon tools** — Polygon2D, collision polygon
-- [ ] **74. 2D: Skeleton2D** — Skeleton2D, bone setup
-- [ ] **75. 2D: Particles2D** — GPUParticles2D
-- [ ] **76. 2D: TileSet editor** — TileSet resource creation
-- [ ] **77. 2D: Navigation2D** — NavigationRegion2D
-- [ ] **78. Animation: `animation-player.ts`** — AnimationPlayer, create animations, tracks, keyframes
-- [ ] **79. Animation: `animation-tree.ts`** — AnimationTree, state machine, blend trees
-- [ ] **80. Animation: `tweening.ts`** — Tween configuration, easing functions
+- [x] **57. 3D: `camera3d.ts`** — Camera3D, properties, current camera, layers
+- [x] **58. 3D: `skeleton.ts`** — Skeleton3D, bone setup, skin attachments
+- [x] **59. 3D: GI tools** — VoxelGI, SDFGI configuration
+- [x] **60. 3D: GridMap tools** — GridMap with mesh library
+- [x] **61. 3D: MultiMesh tools** — MultiMeshInstance3D for instancing
+- [x] **62. 3D: Path3D tools** — Path3D, curve editing
+- [x] **63. 3D: Particles3D** — GPUParticles3D configuration
+- [x] **64. 3D: Reflection probes** — ReflectionProbe, probe configuration
+- [x] **65. 3D: Viewport tools** — SubViewport, ViewportTexture
+- [x] **66. 2D: `tilemap.ts`** — TileMap with TileSet, tile layers, patterns
+- [x] **67. 2D: `sprite2d.ts`** — Sprite2D, AnimatedSprite2D, texture regions
+- [x] **68. 2D: `physics2d.ts`** — StaticBody2D, RigidBody2D, CharacterBody2D, collision shapes
+- [x] **69. 2D: `parallax.ts`** — ParallaxLayer, ParallaxBackground, mirroring
+- [x] **70. 2D: `canvas.ts`** — CanvasLayer, layer ordering, custom drawing
+- [x] **71. 2D: Light2D tools** — Light2D, shadows, blend mode
+- [x] **72. 2D: Path2D tools** — Path2D, curve editing
+- [x] **73. 2D: Polygon tools** — Polygon2D, collision polygon
+- [x] **74. 2D: Skeleton2D** — Skeleton2D, bone setup
+- [x] **75. 2D: Particles2D** — GPUParticles2D
+- [x] **76. 2D: TileSet editor** — TileSet resource creation
+- [x] **77. 2D: Navigation2D** — NavigationRegion2D
+- [x] **78. Animation: `animation-player.ts`** — AnimationPlayer, create animations, tracks, keyframes
+- [x] **79. Animation: `animation-tree.ts`** — AnimationTree, state machine, blend trees
+- [x] **80. Animation: `tweening.ts`** — Tween configuration, easing functions
 - [ ] **81. Animation: `skeleton-ik.ts`** — SkeletonIK3D configuration
 - [ ] **82. Animation: Blend spaces** — BlendSpace2D, BlendSpace1D
 - [ ] **83. Animation: Procedural animation** — Procedural track helpers
@@ -100,32 +100,32 @@
 
 ---
 
-## Phase 4: Editor Plugin & Runtime Control — ~25 tasks
+## Phase 4: Editor Plugin & Runtime Control — ~25 tasks ✅ CORE COMPLETED
 
-- [ ] **86. Editor plugin: `plugin.cfg`** — Plugin metadata
-- [ ] **87. Editor plugin: `plugin.gd`** — Plugin entry point, enable/disable lifecycle
-- [ ] **88. Editor plugin: `mcp_server.gd`** — WebSocket server on :13337, JSON message protocol
-- [ ] **89. Editor plugin: `scene_ops.gd`** — Live scene tree queries, node inspection
-- [ ] **90. Editor plugin: `node_ops.gd`** — Live node creation/modification/deletion
-- [ ] **91. Editor plugin: `script_ops.gd`** — Live script editing in editor
-- [ ] **92. Editor plugin: `editor_ops.gd`** — Editor state, selection, current scene
-- [ ] **93. TypeScript: `editor-bridge.ts`** — WebSocket client to :13337, reconnection, message queue
-- [ ] **94. Runtime: `mcp_autoload.gd`** — Autoload script, WebSocket server on :13338
-- [ ] **95. Runtime: `runtime_ops.gd`** — Runtime operations dispatcher
-- [ ] **96. TypeScript: `runtime-bridge.ts`** — WebSocket client to :13338, reconnection
-- [ ] **97. Runtime tools: `eval.ts`** — `game_eval` with timeout, return value capture
-- [ ] **98. Runtime tools: `input-simulation.ts`** — Keyboard, mouse, gamepad, touch simulation
-- [ ] **99. Runtime tools: `screenshot.ts`** — Capture and return screenshots as base64
-- [ ] **100. Runtime tools: `debug.ts`** — Breakpoint simulation, stack trace, variable inspection
-- [ ] **101. Runtime tools: `state.ts`** — Game state queries, autoload access, singleton inspection
-- [ ] **102. Runtime tools: Performance** — FPS, frame time, memory, object count
-- [ ] **103. Runtime tools: Pause/timescale** — Pause, resume, timescale control
-- [ ] **104. Runtime tools: Window/OS** — Window title, size, fullscreen, OS info
+- [x] **86. Editor plugin: `plugin.cfg`** — Plugin metadata
+- [x] **87. Editor plugin: `plugin.gd`** — Plugin entry point, enable/disable lifecycle
+- [x] **88. Editor plugin: `mcp_server.gd`** — WebSocket server on :13337, JSON message protocol
+- [x] **89. Editor plugin: `scene_ops.gd`** — Live scene tree queries, node inspection
+- [x] **90. Editor plugin: `node_ops.gd`** — Live node creation/modification/deletion
+- [x] **91. Editor plugin: `script_ops.gd`** — Live script editing in editor
+- [x] **92. Editor plugin: `editor_ops.gd`** — Editor state, selection, current scene
+- [x] **93. TypeScript: `editor-bridge.ts`** — WebSocket client to :13337, reconnection, message queue
+- [x] **94. Runtime: `mcp_autoload.gd`** — Autoload script, WebSocket server on :13338
+- [x] **95. Runtime: `runtime_ops.gd`** — Runtime operations dispatcher
+- [x] **96. TypeScript: `runtime-bridge.ts`** — WebSocket client to :13338, reconnection
+- [x] **97. Runtime tools: `eval.ts`** — `game_eval` with timeout, return value capture
+- [x] **98. Runtime tools: `input-simulation.ts`** — Keyboard, mouse, gamepad, touch simulation
+- [x] **99. Runtime tools: `screenshot.ts`** — Capture and return screenshots as base64
+- [x] **100. Runtime tools: `debug.ts`** — Breakpoint simulation, stack trace, variable inspection
+- [x] **101. Runtime tools: `state.ts`** — Game state queries, autoload access, singleton inspection
+- [x] **102. Runtime tools: Performance** — FPS, frame time, memory, object count
+- [x] **103. Runtime tools: Pause/timescale** — Pause, resume, timescale control
+- [x] **104. Runtime tools: Window/OS** — Window title, size, fullscreen, OS info
 - [ ] **105. Editor tools: `launch-editor.ts`** — Launch Godot editor with project
 - [ ] **106. Editor tools: `run-project.ts`** — Run project from editor, stop
 - [ ] **107. Editor tools: `editor-state.ts`** — Query editor state, selection, open scenes
 - [ ] **108. Editor tools: `filesystem.ts`** — Editor filesystem operations, scan
-- [ ] **109. Graceful degradation** — Headless fallback when editor/runtime unavailable
+- [x] **109. Graceful degradation** — Headless fallback when editor/runtime unavailable (implemented in Transport class)
 - [ ] **110. Write Phase 4 tests** — Mock WebSocket tests for editor and runtime bridges
 
 ---
@@ -182,13 +182,13 @@
 **Total: 149 tasks across 6 phases.**
 
 **Progress Tracking:**
-- Phase 1: 17/20 (85%) ✅
-- Phase 2: 0/30 (0%)
-- Phase 3: 0/35 (0%)
-- Phase 4: 0/25 (0%)
+- Phase 1: 20/20 (100%) ✅ COMPLETED
+- Phase 2: 28/30 (93%) ✅ CORE COMPLETED
+- Phase 3: 31/35 (89%) ✅ CORE COMPLETED
+- Phase 4: 19/25 (76%) ✅ CORE COMPLETED
 - Phase 5: 0/25 (0%)
 - Phase 6: 0/15 (0%)
-- **Overall: 17/149 (11%)**
+- **Overall: 98/149 (66%)**
 
 **Notes:**
 - Checkboxes are placed beside each task

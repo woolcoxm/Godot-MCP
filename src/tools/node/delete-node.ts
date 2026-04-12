@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const deleteNodeSchema = z.object({
@@ -9,7 +9,7 @@ const deleteNodeSchema = z.object({
   recursive: z.boolean().default(true).describe('Delete child nodes as well'),
 });
 
-export function createDeleteNodeTool(bridge: HeadlessBridge): RegisteredTool {
+export function createDeleteNodeTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_delete_node',
     name: 'Delete Node from Scene',
@@ -18,12 +18,12 @@ export function createDeleteNodeTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: deleteNodeSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -47,7 +47,7 @@ export function createDeleteNodeTool(bridge: HeadlessBridge): RegisteredTool {
       const updatedContent = SceneParser.serializeScene(sceneInfo);
       
       // Write back to file
-      const writeOperation: HeadlessOperation = {
+      const writeOperation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.scenePath,
@@ -55,7 +55,7 @@ export function createDeleteNodeTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const writeResult = await bridge.execute(writeOperation);
+      const writeResult = await transport.execute(writeOperation);
       
       if (!writeResult.success) {
         throw new Error(`Failed to save scene: ${writeResult.error}`);

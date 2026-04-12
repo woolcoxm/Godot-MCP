@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const modifyScriptSchema = z.object({
   path: z.string().describe('Path to the script file (e.g., "res://scripts/player.gd")'),
@@ -14,7 +14,7 @@ const modifyScriptSchema = z.object({
   backup: z.boolean().default(true).describe('Create backup before modifying'),
 });
 
-export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
+export function createModifyScriptTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_modify_script',
     name: 'Modify GDScript',
@@ -23,12 +23,12 @@ export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: modifyScriptSchema,
     handler: async (args) => {
       // Read the script first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_file',
         params: { path: args.path },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read script: ${readResult.error}`);
@@ -43,7 +43,7 @@ export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
       // Create backup if requested
       if (args.backup) {
         const backupPath = args.path + '.backup';
-        const backupOperation: HeadlessOperation = {
+        const backupOperation: TransportOperation = {
           operation: 'write_file',
           params: {
             path: backupPath,
@@ -51,7 +51,7 @@ export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
           },
         };
         
-        await bridge.execute(backupOperation);
+        await transport.execute(backupOperation);
       }
 
       // In a real implementation, we would:
@@ -75,7 +75,7 @@ export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
       }
 
       // Write back the modified script
-      const writeOperation: HeadlessOperation = {
+      const writeOperation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.path,
@@ -83,7 +83,7 @@ export function createModifyScriptTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const writeResult = await bridge.execute(writeOperation);
+      const writeResult = await transport.execute(writeOperation);
       
       if (!writeResult.success) {
         throw new Error(`Failed to save script: ${writeResult.error}`);

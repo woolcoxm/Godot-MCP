@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { ScriptGenerator } from '../../utils/script-generator.js';
 
 const createScriptSchema = z.object({
@@ -43,7 +43,7 @@ const createScriptSchema = z.object({
   })).optional().describe('Enums to define in the script'),
 });
 
-export function createCreateScriptTool(bridge: HeadlessBridge): RegisteredTool {
+export function createCreateScriptTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_create_script',
     name: 'Create GDScript',
@@ -66,7 +66,7 @@ export function createCreateScriptTool(bridge: HeadlessBridge): RegisteredTool {
       const content = ScriptGenerator.generateScript(scriptInfo);
       
       // Write the script file
-      const operation: HeadlessOperation = {
+      const operation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.path,
@@ -74,7 +74,7 @@ export function createCreateScriptTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const result = await bridge.execute(operation);
+      const result = await transport.execute(operation);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to create script');

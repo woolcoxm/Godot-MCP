@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const lightingSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/level.tscn")'),
@@ -25,7 +25,7 @@ const lightingSchema = z.object({
   }).optional().describe('Initial transform'),
 });
 
-export function createLightingTool(bridge: HeadlessBridge): RegisteredTool {
+export function createLightingTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_lighting',
     name: 'Create 3D Lighting',
@@ -34,12 +34,12 @@ export function createLightingTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: lightingSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const modifySceneSchema = z.object({
@@ -13,7 +13,7 @@ const modifySceneSchema = z.object({
   backup: z.boolean().default(true).describe('Create backup before modifying'),
 });
 
-export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
+export function createModifySceneTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_modify_scene',
     name: 'Modify Godot Scene',
@@ -22,12 +22,12 @@ export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: modifySceneSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.path },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -43,7 +43,7 @@ export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
       // Create backup if requested
       if (args.backup) {
         const backupPath = args.path + '.backup';
-        const backupOperation: HeadlessOperation = {
+        const backupOperation: TransportOperation = {
           operation: 'write_file',
           params: {
             path: backupPath,
@@ -51,7 +51,7 @@ export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
           },
         };
         
-        await bridge.execute(backupOperation);
+        await transport.execute(backupOperation);
       }
 
       // Apply modifications
@@ -87,7 +87,7 @@ export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
       const updatedContent = SceneParser.serializeScene(sceneInfo);
       
       // Write back
-      const writeOperation: HeadlessOperation = {
+      const writeOperation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.path,
@@ -95,7 +95,7 @@ export function createModifySceneTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
       
-      const writeResult = await bridge.execute(writeOperation);
+      const writeResult = await transport.execute(writeOperation);
       if (!writeResult.success) {
         throw new Error(`Failed to save modified scene: ${writeResult.error}`);
       }

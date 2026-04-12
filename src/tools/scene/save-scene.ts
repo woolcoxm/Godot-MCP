@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
 
 const saveSceneSchema = z.object({
@@ -9,7 +9,7 @@ const saveSceneSchema = z.object({
   overwrite: z.boolean().default(true).describe('Overwrite existing file if it exists'),
 });
 
-export function createSaveSceneTool(bridge: HeadlessBridge): RegisteredTool {
+export function createSaveSceneTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_save_scene',
     name: 'Save Godot Scene',
@@ -25,19 +25,19 @@ export function createSaveSceneTool(bridge: HeadlessBridge): RegisteredTool {
       
       // Check if file exists and we shouldn't overwrite
       if (!args.overwrite) {
-        const checkOperation: HeadlessOperation = {
+        const checkOperation: TransportOperation = {
           operation: 'read_file',
           params: { path: args.path },
         };
         
-        const checkResult = await bridge.execute(checkOperation);
+        const checkResult = await transport.execute(checkOperation);
         if (checkResult.success) {
           throw new Error(`File already exists at ${args.path}. Use overwrite=true to replace it.`);
         }
       }
 
       // Write the scene file
-      const operation: HeadlessOperation = {
+      const operation: TransportOperation = {
         operation: 'write_file',
         params: {
           path: args.path,
@@ -45,7 +45,7 @@ export function createSaveSceneTool(bridge: HeadlessBridge): RegisteredTool {
         },
       };
 
-      const result = await bridge.execute(operation);
+      const result = await transport.execute(operation);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to save scene');

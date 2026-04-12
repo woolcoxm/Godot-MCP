@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const navigationSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/level.tscn")'),
@@ -45,7 +45,7 @@ const navigationSchema = z.object({
   sourceNodes: z.array(z.string()).optional().describe('Source nodes to include in navmesh baking'),
 });
 
-export function createNavigationTool(bridge: HeadlessBridge): RegisteredTool {
+export function createNavigationTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_navigation',
     name: '3D Navigation',
@@ -54,12 +54,12 @@ export function createNavigationTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: navigationSchema,
     handler: async (args) => {
       // Read the scene first
-      const readOperation: HeadlessOperation = {
+      const readOperation: TransportOperation = {
         operation: 'read_scene',
         params: { path: args.scenePath },
       };
       
-      const readResult = await bridge.execute(readOperation);
+      const readResult = await transport.execute(readOperation);
       
       if (!readResult.success) {
         throw new Error(`Failed to read scene: ${readResult.error}`);
@@ -73,23 +73,23 @@ export function createNavigationTool(bridge: HeadlessBridge): RegisteredTool {
       
       switch (args.action) {
         case 'create_region':
-          result = await createNavigationRegion(bridge, args);
+          result = await createNavigationRegion(transport, args);
           break;
           
         case 'bake_navmesh':
-          result = await bakeNavMesh(bridge, args);
+          result = await bakeNavMesh(transport, args);
           break;
           
         case 'create_agent':
-          result = await createNavigationAgent(bridge, args);
+          result = await createNavigationAgent(transport, args);
           break;
           
         case 'create_obstacle':
-          result = await createNavigationObstacle(bridge, args);
+          result = await createNavigationObstacle(transport, args);
           break;
           
         case 'configure_navigation':
-          result = await configureNavigation(bridge, args);
+          result = await configureNavigation(transport, args);
           break;
           
         default:
@@ -103,7 +103,7 @@ export function createNavigationTool(bridge: HeadlessBridge): RegisteredTool {
   };
 }
 
-async function createNavigationRegion(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createNavigationRegion(_transport: Transport, args: any): Promise<any> {
   const nodePath = args.parentPath === '.' ? args.name : `${args.parentPath}/${args.name}`;
   
   // In a real implementation, we would:
@@ -121,7 +121,7 @@ async function createNavigationRegion(_bridge: HeadlessBridge, args: any): Promi
   };
 }
 
-async function bakeNavMesh(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function bakeNavMesh(_transport: Transport, args: any): Promise<any> {
   // In a real implementation, we would:
   // 1. Collect geometry from source nodes
   // 2. Bake navigation mesh using settings
@@ -137,7 +137,7 @@ async function bakeNavMesh(_bridge: HeadlessBridge, args: any): Promise<any> {
   };
 }
 
-async function createNavigationAgent(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createNavigationAgent(_transport: Transport, args: any): Promise<any> {
   const nodePath = args.parentPath === '.' ? args.name : `${args.parentPath}/${args.name}`;
   
   // In a real implementation, we would:
@@ -154,7 +154,7 @@ async function createNavigationAgent(_bridge: HeadlessBridge, args: any): Promis
   };
 }
 
-async function createNavigationObstacle(_bridge: HeadlessBridge, args: any): Promise<any> {
+async function createNavigationObstacle(_transport: Transport, args: any): Promise<any> {
   const nodePath = args.parentPath === '.' ? args.name : `${args.parentPath}/${args.name}`;
   
   // In a real implementation, we would:
@@ -171,7 +171,7 @@ async function createNavigationObstacle(_bridge: HeadlessBridge, args: any): Pro
   };
 }
 
-async function configureNavigation(_bridge: HeadlessBridge, _args: any): Promise<any> {
+async function configureNavigation(_transport: Transport, _args: any): Promise<any> {
   // In a real implementation, we would:
   // 1. Configure global navigation settings
   // 2. Save the scene

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
-import { HeadlessBridge, HeadlessOperation } from '../../transports/headless-bridge.js';
+import { Transport, TransportOperation } from '../../transports/transport.js';
 
 const readScriptSchema = z.object({
   path: z.string().describe('Path to the script file (e.g., "res://scripts/player.gd")'),
   includeSource: z.boolean().default(false).describe('Include the full source code in the response'),
 });
 
-export function createReadScriptTool(bridge: HeadlessBridge): RegisteredTool {
+export function createReadScriptTool(transport: Transport): RegisteredTool {
   return {
     id: 'godot_read_script',
     name: 'Read GDScript',
@@ -16,12 +16,12 @@ export function createReadScriptTool(bridge: HeadlessBridge): RegisteredTool {
     inputSchema: readScriptSchema,
     handler: async (args) => {
       // Read the script file
-      const operation: HeadlessOperation = {
+      const operation: TransportOperation = {
         operation: 'read_file',
         params: { path: args.path },
       };
 
-      const result = await bridge.execute(operation);
+      const result = await transport.execute(operation);
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to read script');
