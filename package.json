@@ -1,22 +1,33 @@
 {
   "name": "godot-mcp",
   "version": "1.0.0",
-  "description": "MCP server for full Godot Engine control via LLM",
-  "type": "module",
-  "main": "dist/index.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
     "start": "node dist/index.js"
   },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "ws": "^8.18.0",
-    "zod": "^3.24.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/woolcoxm/Godot-MCP.git"
   },
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "@types/ws": "^8.5.0",
-    "typescript": "^5.7.0"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/woolcoxm/Godot-MCP/issues"
+  },
+  "homepage": "https://github.com/woolcoxm/Godot-MCP#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4",
+    "zod": "^4.3.6"
   }
 }
