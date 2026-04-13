@@ -5,15 +5,29 @@ import { createReadSceneTool } from './scene/read-scene.js';
 import { createModifySceneTool } from './scene/modify-scene.js';
 import { createSaveSceneTool } from './scene/save-scene.js';
 import { createSceneTreeTool } from './scene/scene-tree.js';
+import { createBatchOperationsTool } from './scene/batch-operations.js';
 import { createCreateProjectTool } from './project/create-project.js';
+import { createInputMapTool } from './project/input-map.js';
+import { createAutoloadsTool } from './project/autoloads.js';
+import { createPluginsTool } from './project/plugins.js';
+import { createTranslationsTool } from './project/translations.js';
 import { createCreateNodeTool } from './node/create-node.js';
 import { createModifyNodeTool } from './node/modify-node.js';
 import { createDeleteNodeTool } from './node/delete-node.js';
 import { createNodePropertiesTool } from './node/properties.js';
+import { createSignalsTool } from './node/signals.js';
+import { createGroupsTool } from './node/groups.js';
+import { createAdditionalOpsTool } from './node/additional-ops.js';
 import { createCreateScriptTool } from './script/create-script.js';
 import { createReadScriptTool } from './script/read-script.js';
 import { createModifyScriptTool } from './script/modify-script.js';
+import { createAnalyzeScriptTool } from './script/analyze-script.js';
+import { createAttachScriptTool } from './script/attach-script.js';
 import { createImportAssetTool } from './assets/import-asset.js';
+import { createMaterialTool } from './assets/create-material.js';
+import { createShaderTool } from './assets/create-shader.js';
+import { createTextureTool } from './assets/create-texture.js';
+import { createProceduralMeshTool } from './assets/procedural-mesh.js';
 import { createCSGOpsTool } from './3d/csg-ops.js';
 import { createMeshInstanceTool } from './3d/mesh-instance.js';
 import { createLightingTool } from './3d/lighting.js';
@@ -44,11 +58,18 @@ import { createNavigation2DTool } from './2d/navigation2d.js';
 import { createAnimationPlayerTool } from './animation/animation-player.js';
 import { createAnimationTreeTool } from './animation/animation-tree.js';
 import { createTweeningTool } from './animation/tweening.js';
+import { createSkeletonIKTool } from './animation/skeleton-ik.js';
+import { createBlendSpacesTool } from './animation/blend-spaces.js';
+import { createProceduralAnimationTool } from './animation/procedural-animation.js';
 import { createEvalTool } from './runtime/eval.js';
 import { createSimulateInputTool } from './runtime/input-simulation.js';
 import { createScreenshotTool } from './runtime/screenshot.js';
 import { createDebugInfoTool } from './runtime/debug.js';
 import { createGameStateTool } from './runtime/state.js';
+import { createLaunchEditorTool } from './editor/launch-editor.js';
+import { createRunProjectTool } from './editor/run-project.js';
+import { createEditorStateTool } from './editor/editor-state.js';
+import { createFilesystemTool } from './editor/filesystem.js';
 import { createControlTool } from './ui/controls.js';
 import { createThemeTool, createApplyThemeTool } from './ui/theme.js';
 import { createLayoutTool, createArrangeTool } from './ui/layout.js';
@@ -70,6 +91,10 @@ import { createDocsResourceTool } from './resources/docs-resource.js';
 export function registerAllTools(registry: ToolRegistry, transport: Transport): void {
   // Project tools
   registry.registerTool(createCreateProjectTool(transport));
+  registry.registerTool(createInputMapTool(transport));
+  registry.registerTool(createAutoloadsTool(transport));
+  registry.registerTool(createPluginsTool(transport));
+  registry.registerTool(createTranslationsTool(transport));
   
   // Scene tools
   registry.registerTool(createCreateSceneTool(transport));
@@ -77,20 +102,30 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   registry.registerTool(createModifySceneTool(transport));
   registry.registerTool(createSaveSceneTool(transport));
   registry.registerTool(createSceneTreeTool(transport));
+  registry.registerTool(createBatchOperationsTool(transport));
   
   // Node tools
   registry.registerTool(createCreateNodeTool(transport));
   registry.registerTool(createModifyNodeTool(transport));
   registry.registerTool(createDeleteNodeTool(transport));
   registry.registerTool(createNodePropertiesTool(transport));
+  registry.registerTool(createSignalsTool(transport));
+  registry.registerTool(createGroupsTool(transport));
+  registry.registerTool(createAdditionalOpsTool(transport));
   
   // Script tools
   registry.registerTool(createCreateScriptTool(transport));
   registry.registerTool(createReadScriptTool(transport));
   registry.registerTool(createModifyScriptTool(transport));
+  registry.registerTool(createAnalyzeScriptTool(transport));
+  registry.registerTool(createAttachScriptTool(transport));
   
   // Asset tools
   registry.registerTool(createImportAssetTool(transport));
+  registry.registerTool(createMaterialTool(transport));
+  registry.registerTool(createShaderTool(transport));
+  registry.registerTool(createTextureTool(transport));
+  registry.registerTool(createProceduralMeshTool(transport));
   
   // 3D tools
   registry.registerTool(createCSGOpsTool(transport));
@@ -129,6 +164,9 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   registry.registerTool(createAnimationPlayerTool(transport));
   registry.registerTool(createAnimationTreeTool(transport));
   registry.registerTool(createTweeningTool(transport));
+  registry.registerTool(createSkeletonIKTool(transport));
+  registry.registerTool(createBlendSpacesTool(transport));
+  registry.registerTool(createProceduralAnimationTool(transport));
   
   // Runtime tools
   registry.registerTool(createEvalTool(transport));
@@ -136,6 +174,12 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   registry.registerTool(createScreenshotTool(transport));
   registry.registerTool(createDebugInfoTool(transport));
   registry.registerTool(createGameStateTool(transport));
+  
+  // Editor tools
+  registry.registerTool(createLaunchEditorTool(transport));
+  registry.registerTool(createRunProjectTool(transport));
+  registry.registerTool(createEditorStateTool(transport));
+  registry.registerTool(createFilesystemTool(transport));
   
   // UI tools
   registry.registerTool(createControlTool(transport));

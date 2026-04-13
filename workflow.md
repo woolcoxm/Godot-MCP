@@ -19,7 +19,7 @@
 - [x] **15. Create `src/utils/scene-parser.ts`** — `.tscn` and `.tres` file parser (read structured data from Godot's text formats)
 - [x] **16. Create `src/utils/script-generator.ts`** — GDScript code generation helpers (indent management, class generation, signal/export annotations)
 - [x] **17. Write Phase 1 tests** — Config, logger, registry, headless bridge, godot-types, scene-parser
-- [ ] **18. Create test fixtures** — `tests/fixtures/test_project/` with a minimal Godot project
+- [x] **18. Create test fixtures** — `tests/fixtures/test_project/` with a minimal Godot project
 - [x] **19. Set up `.gitignore`**, basic `README.md`
 - [x] **20. Smoke test** — Verify MCP server starts, responds to `list_categories`, headless bridge spawns
 
@@ -92,11 +92,11 @@
 - [x] **78. Animation: `animation-player.ts`** — AnimationPlayer, create animations, tracks, keyframes
 - [x] **79. Animation: `animation-tree.ts`** — AnimationTree, state machine, blend trees
 - [x] **80. Animation: `tweening.ts`** — Tween configuration, easing functions
-- [ ] **81. Animation: `skeleton-ik.ts`** — SkeletonIK3D configuration
-- [ ] **82. Animation: Blend spaces** — BlendSpace2D, BlendSpace1D
-- [ ] **83. Animation: Procedural animation** — Procedural track helpers
-- [ ] **84. Write Phase 3 tests** — All 3D, 2D, and animation tools
-- [ ] **85. Integration test** — Build a small 3D level and a 2D level programmatically
+- [x] **81. Animation: `skeleton-ik.ts`** — SkeletonIK3D configuration
+- [x] **82. Animation: Blend spaces** — BlendSpace2D, BlendSpace1D
+- [x] **83. Animation: Procedural animation** — Procedural track helpers
+- [x] **84. Write Phase 3 tests** — All 3D, 2D, and animation tools
+- [x] **85. Integration test** — Build a small 3D level and a 2D level programmatically
 
 ---
 
@@ -121,12 +121,12 @@
 - [x] **102. Runtime tools: Performance** — FPS, frame time, memory, object count
 - [x] **103. Runtime tools: Pause/timescale** — Pause, resume, timescale control
 - [x] **104. Runtime tools: Window/OS** — Window title, size, fullscreen, OS info
-- [ ] **105. Editor tools: `launch-editor.ts`** — Launch Godot editor with project
-- [ ] **106. Editor tools: `run-project.ts`** — Run project from editor, stop
-- [ ] **107. Editor tools: `editor-state.ts`** — Query editor state, selection, open scenes
-- [ ] **108. Editor tools: `filesystem.ts`** — Editor filesystem operations, scan
+- [x] **105. Editor tools: `launch-editor.ts`** — Launch Godot editor with project
+- [x] **106. Editor tools: `run-project.ts`** — Run project from editor, stop
+- [x] **107. Editor tools: `editor-state.ts`** — Query editor state, selection, open scenes
+- [x] **108. Editor tools: `filesystem.ts`** — Editor filesystem operations, scan
 - [x] **109. Graceful degradation** — Headless fallback when editor/runtime unavailable (implemented in Transport class)
-- [ ] **110. Write Phase 4 tests** — Mock WebSocket tests for editor and runtime bridges
+- [x] **110. Write Phase 4 tests** — Mock WebSocket tests for editor and runtime bridges
 
 ---
 
