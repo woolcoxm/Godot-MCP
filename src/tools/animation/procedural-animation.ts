@@ -106,15 +106,15 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
     readOnlyHint: false,
     idempotentHint: true,
     inputSchema: {
-      type: 'object',
+      operation: 'object',
       properties: {
         operation: {
-          type: 'string',
+          operation: 'string',
           enum: ['create', 'configure', 'control'],
           description: 'Operation to perform',
         },
-        data: {
-          type: 'object',
+        params: {
+          operation: 'object',
           description: 'Operation data',
         },
       },
@@ -134,8 +134,8 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           }
           
           const op: TransportOperation = {
-            type: 'create_node',
-            data: {
+            operation: 'create_node',
+            params: {
               scenePath: validated.scenePath,
               parentPath: validated.parentPath,
               nodeType,
@@ -149,7 +149,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Created procedural animation node "${validated.name}" (${validated.type}) in scene "${validated.scenePath}"`,
               },
             ],
@@ -160,8 +160,8 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           const validated = configureProceduralAnimationSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'modify_node',
-            data: {
+            operation: 'modify_node',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               properties: validated.properties,
@@ -172,7 +172,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Configured procedural animation node at "${validated.nodePath}"`,
               },
             ],
@@ -209,8 +209,8 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           }
           
           const op: TransportOperation = {
-            type: 'call_method',
-            data: {
+            operation: 'call_method',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               method,
@@ -222,7 +222,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `${validated.action} performed on procedural animation node at "${validated.nodePath}"`,
               },
             ],

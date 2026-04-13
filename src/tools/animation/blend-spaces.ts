@@ -93,15 +93,15 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
     readOnlyHint: false,
     idempotentHint: true,
     inputSchema: {
-      type: 'object',
+      operation: 'object',
       properties: {
         operation: {
-          type: 'string',
+          operation: 'string',
           enum: ['create', 'configure', 'set_position'],
           description: 'Operation to perform',
         },
-        data: {
-          type: 'object',
+        params: {
+          operation: 'object',
           description: 'Operation data',
         },
       },
@@ -117,8 +117,8 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           const nodeType = validated.type === '1d' ? 'BlendSpace1D' : 'BlendSpace2D';
           
           const op: TransportOperation = {
-            type: 'create_node',
-            data: {
+            operation: 'create_node',
+            params: {
               scenePath: validated.scenePath,
               parentPath: validated.parentPath,
               nodeType,
@@ -132,7 +132,7 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Created ${nodeType} node "${validated.name}" in scene "${validated.scenePath}"`,
               },
             ],
@@ -143,8 +143,8 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           const validated = configureBlendSpaceSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'modify_node',
-            data: {
+            operation: 'modify_node',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               properties: validated.properties,
@@ -155,7 +155,7 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Configured blend space node at "${validated.nodePath}"`,
               },
             ],
@@ -166,8 +166,8 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           const validated = setBlendPositionSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'call_method',
-            data: {
+            operation: 'call_method',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               method: 'set_blend_position',
@@ -179,7 +179,7 @@ export function createBlendSpacesTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Set blend position to (${validated.position.x || 0}, ${validated.position.y || 0}) at "${validated.nodePath}"`,
               },
             ],

@@ -75,15 +75,15 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
     readOnlyHint: false,
     idempotentHint: true,
     inputSchema: {
-      type: 'object',
+      operation: 'object',
       properties: {
         operation: {
-          type: 'string',
+          operation: 'string',
           enum: ['create', 'configure', 'start_stop'],
           description: 'Operation to perform',
         },
-        data: {
-          type: 'object',
+        params: {
+          operation: 'object',
           description: 'Operation data',
         },
       },
@@ -97,8 +97,8 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           const validated = skeletonIKSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'create_node',
-            data: {
+            operation: 'create_node',
+            params: {
               scenePath: validated.scenePath,
               parentPath: validated.parentPath,
               nodeType: 'SkeletonIK3D',
@@ -112,7 +112,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Created SkeletonIK3D node "${validated.name}" in scene "${validated.scenePath}"`,
               },
             ],
@@ -123,8 +123,8 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           const validated = configureSkeletonIKSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'modify_node',
-            data: {
+            operation: 'modify_node',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               properties: validated.properties,
@@ -135,7 +135,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `Configured SkeletonIK3D node at "${validated.nodePath}"`,
               },
             ],
@@ -146,8 +146,8 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           const validated = startStopSkeletonIKSchema.parse(data);
           
           const op: TransportOperation = {
-            type: 'call_method',
-            data: {
+            operation: 'call_method',
+            params: {
               scenePath: validated.scenePath,
               nodePath: validated.nodePath,
               method: validated.action === 'start' ? 'start' : 'stop',
@@ -159,7 +159,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
           return {
             content: [
               {
-                type: 'text',
+                operation: 'text',
                 text: `${validated.action === 'start' ? 'Started' : 'Stopped'} SkeletonIK3D at "${validated.nodePath}"`,
               },
             ],
