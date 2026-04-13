@@ -2,10 +2,13 @@ import { HeadlessBridge } from './headless-bridge.js';
 import { EditorBridge } from './editor-bridge.js';
 import { RuntimeBridge } from './runtime-bridge.js';
 import { TransportRetry } from '../utils/retry.js';
+import { logger } from '../utils/logger.js';
 
 export interface TransportOperation {
-  operation: string;
-  params: Record<string, any>;
+  operation?: string;
+  params?: Record<string, any>;
+  type?: string;
+  data?: any;
 }
 
 export interface TransportResult {
@@ -147,7 +150,7 @@ export class Transport {
               throw new Error(`Unknown transport mode: ${this.mode}`);
           }
         },
-        operation.operation,
+        operation.operation || '',
         {
           maxAttempts: this.mode === TransportMode.HEADLESS ? 3 : 2,
           initialDelay: this.mode === TransportMode.HEADLESS ? 500 : 1000
@@ -324,41 +327,43 @@ export class Transport {
     }
   }
 
-  // Convenience method to auto-detect available transport
   static async autoDetect(options: TransportOptions = {}): Promise<Transport> {
-    // Try runtime first (if game is running)
     const runtimeBridge = new RuntimeBridge(
       `ws://${options.runtimeHost || 'localhost'}:${options.runtimePort || 13338}`
     );
     
     try {
-      const runtimeConnected = await runtimeBridge.connect();
+      const runtimeConnected = await Promise.race([
+        runtimeBridge.connect({ probeOnly: true }),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+      ]);
       if (runtimeConnected) {
-        console.log('[Transport] Auto-detected: Runtime mode');
+        logger.info('Auto-detected: Runtime mode');
         return new Transport({ ...options, mode: TransportMode.RUNTIME });
       }
     } catch (error) {
-      console.log('[Transport] Runtime not available:', error instanceof Error ? error.message : String(error));
+      logger.debug('Runtime not available:', error instanceof Error ? error.message : String(error));
     }
     
-    // Try editor next
     const editorBridge = new EditorBridge({
       host: options.editorHost,
       port: options.editorPort
     });
     
     try {
-      const editorConnected = await editorBridge.connect();
+      const editorConnected = await Promise.race([
+        editorBridge.connect(),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+      ]);
       if (editorConnected) {
-        console.log('[Transport] Auto-detected: Editor mode');
+        logger.info('Auto-detected: Editor mode');
         return new Transport({ ...options, mode: TransportMode.EDITOR });
       }
     } catch (error) {
-      console.log('[Transport] Editor not available:', error instanceof Error ? error.message : String(error));
+      logger.debug('Editor not available:', error instanceof Error ? error.message : String(error));
     }
     
-    // Fall back to headless
-    console.log('[Transport] Auto-detected: Headless mode');
+    logger.info('Auto-detected: Headless mode');
     return new Transport({ ...options, mode: TransportMode.HEADLESS });
   }
 }

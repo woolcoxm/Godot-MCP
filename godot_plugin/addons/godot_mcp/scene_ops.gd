@@ -111,37 +111,34 @@ func _get_node_properties(node: Node) -> Dictionary:
 		if type == TYPE_OBJECT or type == TYPE_ARRAY or type == TYPE_DICTIONARY:
 			continue
 		
-		try:
-			var value = node.get(name)
-			if value != null:
-				# Convert Godot types to basic types
-				if value is Vector2:
-					properties[name] = {"x": value.x, "y": value.y}
-				elif value is Vector3:
-					properties[name] = {"x": value.x, "y": value.y, "z": value.z}
-				elif value is Color:
-					properties[name] = {"r": value.r, "g": value.g, "b": value.b, "a": value.a}
-				elif value is Rect2:
-					properties[name] = {"position": {"x": value.position.x, "y": value.position.y}, "size": {"x": value.size.x, "y": value.size.y}}
-				elif value is Transform2D:
-					properties[name] = {
-						"x": {"x": value.x.x, "y": value.x.y},
-						"y": {"x": value.y.x, "y": value.y.y},
-						"origin": {"x": value.origin.x, "y": value.origin.y}
-					}
-				elif value is Transform3D:
-					properties[name] = {
-						"basis": {
-							"x": {"x": value.basis.x.x, "y": value.basis.x.y, "z": value.basis.x.z},
-							"y": {"x": value.basis.y.x, "y": value.basis.y.y, "z": value.basis.y.z},
-							"z": {"x": value.basis.z.x, "y": value.basis.z.y, "z": value.basis.z.z}
-						},
-						"origin": {"x": value.origin.x, "y": value.origin.y, "z": value.origin.z}
-					}
-				else:
-					properties[name] = value
-		except:
-			pass
+		var value = node.get(name)
+		if value != null:
+			# Convert Godot types to basic types
+			if value is Vector2:
+				properties[name] = {"x": value.x, "y": value.y}
+			elif value is Vector3:
+				properties[name] = {"x": value.x, "y": value.y, "z": value.z}
+			elif value is Color:
+				properties[name] = {"r": value.r, "g": value.g, "b": value.b, "a": value.a}
+			elif value is Rect2:
+				properties[name] = {"position": {"x": value.position.x, "y": value.position.y}, "size": {"x": value.size.x, "y": value.size.y}}
+			elif value is Transform2D:
+				properties[name] = {
+					"x": {"x": value.x.x, "y": value.x.y},
+					"y": {"x": value.y.x, "y": value.y.y},
+					"origin": {"x": value.origin.x, "y": value.origin.y}
+				}
+			elif value is Transform3D:
+				properties[name] = {
+					"basis": {
+						"x": {"x": value.basis.x.x, "y": value.basis.x.y, "z": value.basis.x.z},
+						"y": {"x": value.basis.y.x, "y": value.basis.y.y, "z": value.basis.y.z},
+						"z": {"x": value.basis.z.x, "y": value.basis.z.y, "z": value.basis.z.z}
+					},
+					"origin": {"x": value.origin.x, "y": value.origin.y, "z": value.origin.z}
+				}
+			else:
+				properties[name] = value
 	
 	return properties
 

@@ -73,13 +73,13 @@ export class ResourceParser {
     
     // Store format and load_steps as properties
     if (params.format) {
-      resourceInfo.properties.format = parseInt(params.format);
+      resourceInfo.properties!.format = parseInt(params.format);
     }
     if (params.load_steps) {
-      resourceInfo.properties.load_steps = parseInt(params.load_steps);
+      resourceInfo.properties!.load_steps = parseInt(params.load_steps);
     }
     if (params.uid) {
-      resourceInfo.properties.uid = params.uid;
+      resourceInfo.properties!.uid = params.uid;
     }
   }
 
@@ -106,7 +106,7 @@ export class ResourceParser {
     }
 
     // Store in properties with ID as key
-    resourceInfo.properties[`ExtResource(${extResource.id})`] = extResource;
+    resourceInfo.properties![`ExtResource(${extResource.id})`] = extResource;
   }
 
   private static processSubResource(
@@ -134,7 +134,7 @@ export class ResourceParser {
     resourceInfo.sub_resources.push(subResource);
     
     // Also store reference in main properties
-    resourceInfo.properties[`SubResource(${subResource.id})`] = subResource;
+    resourceInfo.properties![`SubResource(${subResource.id})`] = subResource;
   }
 
   private static processResourceProperties(

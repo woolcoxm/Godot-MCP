@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { logger } from '../utils/logger.js';
 
 export interface RuntimeMessage {
   jsonrpc: '2.0';
@@ -31,7 +32,7 @@ export class RuntimeBridge {
     this.url = url;
   }
 
-  async connect(): Promise<boolean> {
+  async connect(options?: { probeOnly?: boolean }): Promise<boolean> {
     if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
       return true;
     }
@@ -43,31 +44,39 @@ export class RuntimeBridge {
         this.ws.onopen = () => {
           this.connected = true;
           this.reconnectAttempts = 0;
-          console.log('[RuntimeBridge] Connected to runtime WebSocket server');
+          logger.debug('[RuntimeBridge] Connected to runtime WebSocket server');
           this._processMessageQueue();
           resolve(true);
         };
 
         this.ws.onclose = (event: any) => {
           this.connected = false;
-          console.warn(`[RuntimeBridge] Disconnected from runtime: ${event.code} ${event.reason}`);
+          logger.warn(`[RuntimeBridge] Disconnected from runtime: ${event.code} ${event.reason}`);
           
+          if (options?.probeOnly) {
+            resolve(false);
+            return;
+          }
+
           if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             const delay = this.reconnectDelay * Math.pow(1.5, this.reconnectAttempts - 1);
-            console.log(`[RuntimeBridge] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            logger.debug(`[RuntimeBridge] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
             
             setTimeout(() => {
               this.connect().then(resolve);
             }, delay);
           } else {
-            console.error('[RuntimeBridge] Max reconnection attempts reached');
+            logger.error('[RuntimeBridge] Max reconnection attempts reached');
             resolve(false);
           }
         };
 
         this.ws.onerror = (error: any) => {
-          console.error('[RuntimeBridge] WebSocket error:', error);
+          logger.error('[RuntimeBridge] WebSocket error:', error.message || error);
+          if (options?.probeOnly) {
+            resolve(false);
+          }
         };
 
         this.ws.onmessage = (event: any) => {
@@ -75,11 +84,11 @@ export class RuntimeBridge {
             const data = JSON.parse(event.data.toString());
             this._handleMessage(data);
           } catch (error) {
-            console.error('[RuntimeBridge] Failed to parse WebSocket message:', error);
+            logger.error('[RuntimeBridge] Failed to parse WebSocket message:', error);
           }
         };
       } catch (error) {
-        console.error('[RuntimeBridge] Failed to create WebSocket connection:', error);
+          logger.error('[RuntimeBridge] Failed to create WebSocket connection:', error);
         resolve(false);
       }
     });
@@ -118,7 +127,7 @@ export class RuntimeBridge {
       if (this.ws?.readyState === WebSocket.OPEN) {
         this._sendMessage(message);
       } else {
-        console.warn('[RuntimeBridge] WebSocket not ready, queuing message');
+        logger.warn('[RuntimeBridge] WebSocket not ready, queuing message');
       }
     });
   }
@@ -127,7 +136,7 @@ export class RuntimeBridge {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
-      console.error('[RuntimeBridge] Cannot send message, WebSocket not open');
+      logger.error('[RuntimeBridge] Cannot send message, WebSocket not open');
     }
   }
 
@@ -135,7 +144,7 @@ export class RuntimeBridge {
     const index = this.messageQueue.findIndex(item => item.message.id === response.id);
     
     if (index === -1) {
-      console.warn(`[RuntimeBridge] Received response for unknown message id: ${response.id}`);
+      logger.warn(`[RuntimeBridge] Received response for unknown message id: ${response.id}`);
       return;
     }
 

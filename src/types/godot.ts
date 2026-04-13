@@ -84,6 +84,7 @@ export interface Projection {
 
 export interface NodePath {
   path: string;
+  name?: string;
 }
 
 export interface RID {
@@ -144,11 +145,13 @@ export interface NodeInfo {
   type: string;
   path: NodePath;
   parent?: NodePath;
-  children: NodePath[];
+  children: (NodeInfo | NodePath)[];
   properties: Record<string, any>;
   groups: string[];
-  script?: string;
+  script?: string | { path: string };
   metadata: Record<string, any>;
+  instance?: string;
+  instance_placeholder?: string;
 }
 
 export interface SceneInfo {
@@ -160,6 +163,7 @@ export interface SceneInfo {
   format?: number;
   load_steps?: number;
   uid?: string;
+  editable_instances?: string[];
 }
 
 export interface ResourceInfo {
@@ -181,6 +185,8 @@ export interface ConnectionInfo {
   method: string;
   binds: any[];
   flags: number;
+  source?: NodePath;
+  target?: NodePath;
 }
 
 export interface ScriptInfo {

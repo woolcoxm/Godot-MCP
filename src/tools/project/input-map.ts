@@ -180,7 +180,7 @@ export function createModifyInputActionTool(transport: Transport): RegisteredToo
       // Remove events
       if (args.removeEvents && args.removeEvents.length > 0) {
         events = events.filter(event => {
-          return !args.removeEvents!.some(removeEvent => 
+          return !args.removeEvents!.some((removeEvent: any) => 
             removeEvent.type === event.type &&
             removeEvent.value === event.value &&
             (removeEvent.device || 0) === (event.device || 0)
@@ -204,7 +204,7 @@ export function createModifyInputActionTool(transport: Transport): RegisteredToo
       const updateResult = await transport.execute(updateOperation);
       
       if (!updateResult.success) {
-        throw new Error(result.error || 'Failed to modify input action');
+        throw new Error(updateResult.error || 'Failed to modify input action');
       }
 
       return {

@@ -108,11 +108,13 @@ export function createReparentNodeTool(transport: Transport): RegisteredTool {
         // Update any signal connections involving this node
         if (sceneInfo.connections) {
           sceneInfo.connections.forEach(conn => {
-            if (conn.source?.path === args.nodePath) {
-              conn.source.path = nodePath;
+            if (conn.source?.path === args.nodePath || conn.from?.path === args.nodePath) {
+              if (conn.source) conn.source.path = nodePath;
+              else conn.from.path = nodePath;
             }
-            if (conn.target?.path === args.nodePath) {
-              conn.target.path = nodePath;
+            if (conn.target?.path === args.nodePath || conn.to?.path === args.nodePath) {
+              if (conn.target) conn.target.path = nodePath;
+              else conn.to.path = nodePath;
             }
           });
         }

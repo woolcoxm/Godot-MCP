@@ -205,7 +205,7 @@ function validateOperation(op: any, sceneInfo: SceneInfo): { valid: boolean; err
       // Check if node name already exists in parent
       if (op.parentPath !== '.') {
         const parent = SceneParser.findNodeByPath(sceneInfo, op.parentPath);
-        if (parent?.children?.some(child => child.name === op.nodeName)) {
+        if (parent?.children?.some((child: any) => child.name === op.nodeName)) {
           return { valid: false, error: `Node with name "${op.nodeName}" already exists in parent` };
         }
       } else {
@@ -245,7 +245,7 @@ function validateOperation(op: any, sceneInfo: SceneInfo): { valid: boolean; err
         const nodeName = op.nodePath.substring(op.nodePath.lastIndexOf('/') + 1);
         if (op.newParentPath !== '.') {
           const newParent = SceneParser.findNodeByPath(sceneInfo, op.newParentPath);
-          if (newParent?.children?.some(child => child.name === nodeName)) {
+          if (newParent?.children?.some((child: any) => child.name === nodeName)) {
             return { valid: false, error: `Node with name "${nodeName}" already exists in new parent` };
           }
         }
@@ -442,7 +442,7 @@ function applyDeleteNode(op: any, sceneInfo: SceneInfo): BatchOperationResult {
   
   if (parent && parent.children) {
     const nodeName = op.nodePath.substring(op.nodePath.lastIndexOf('/') + 1);
-    const index = parent.children.findIndex(child => child.name === nodeName);
+    const index = parent.children.findIndex((child: any) => child.name === nodeName);
     if (index !== -1) {
       parent.children.splice(index, 1);
     }
@@ -465,7 +465,7 @@ function applyDeleteNode(op: any, sceneInfo: SceneInfo): BatchOperationResult {
   };
 }
 
-function applyReparentNode(op: any, sceneInfo: SceneInfo): BatchOperationResult {
+function applyReparentNode(op: any, _sceneInfo: SceneInfo): BatchOperationResult {
   // This is a complex operation that would require significant refactoring
   // For now, we'll return a placeholder implementation
   return {

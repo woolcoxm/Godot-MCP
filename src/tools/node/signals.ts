@@ -91,8 +91,10 @@ export function createConnectSignalTool(transport: Transport): RegisteredTool {
       // Add new connection
       sceneInfo.connections.push({
         source: { path: args.sourceNodePath },
+        from: { path: args.sourceNodePath },
         signal: args.signalName,
         target: { path: args.targetNodePath },
+        to: { path: args.targetNodePath },
         method: args.targetMethod,
         binds: args.binds || [],
         flags: args.flags,

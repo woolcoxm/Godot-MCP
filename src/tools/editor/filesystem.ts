@@ -53,21 +53,10 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        operation: {
-          type: 'string',
-          enum: ['scan', 'navigate', 'create', 'delete', 'move', 'import'],
-          description: 'Operation to perform',
-        },
-        data: {
-          type: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['scan', 'navigate', 'create', 'delete', 'move', 'import']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       
@@ -148,7 +137,7 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
           };
           
           try {
-            const result = await transport.execute(op);
+            await transport.execute(op);
             return {
               content: [
                 {
@@ -186,7 +175,7 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
           };
           
           try {
-            const result = await transport.execute(op);
+            await transport.execute(op);
             return {
               content: [
                 {
@@ -222,7 +211,7 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
           };
           
           try {
-            const result = await transport.execute(op);
+            await transport.execute(op);
             return {
               content: [
                 {
@@ -259,7 +248,7 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
           };
           
           try {
-            const result = await transport.execute(op);
+            await transport.execute(op);
             return {
               content: [
                 {
@@ -296,7 +285,7 @@ export function createFilesystemTool(transport: Transport): RegisteredTool {
           };
           
           try {
-            const result = await transport.execute(op);
+            await transport.execute(op);
             return {
               content: [
                 {

@@ -358,7 +358,7 @@ export function createDetachScriptTool(transport: Transport): RegisteredTool {
         };
       }
 
-      const oldScriptPath = node.script.path;
+      const oldScriptPath = typeof node.script === 'string' ? node.script : node.script.path;
       
       // Remove script reference
       delete node.script;
@@ -436,7 +436,7 @@ export function createGetNodeScriptTool(transport: Transport): RegisteredTool {
         };
       }
 
-      const scriptPath = node.script.path;
+      const scriptPath = typeof node.script === 'string' ? node.script : node.script.path;
       
       // Try to read the script content
       const readScriptOperation: TransportOperation = {

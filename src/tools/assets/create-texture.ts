@@ -113,8 +113,8 @@ function createGradientTexture(args: any): string {
     `filter = ${args.filter.includes('nearest') ? '0' : '1'}`, // 0 = nearest, 1 = linear
   ];
   
-  // Create gradient resource
-  const gradientResource = [
+  // Create gradient resource (reserved for future use)
+  void [
     '[gd_resource type="Gradient" load_steps=1 format=3]',
     '',
     '[resource]',
@@ -153,8 +153,8 @@ function createNoiseTexture(args: any): string {
     `normalize = true`,
   ];
   
-  // Create noise resource
-  const noiseResource = [
+  // Create noise resource (reserved for future use)
+  void [
     '[gd_resource type="FastNoiseLite" load_steps=1 format=3]',
     '',
     '[resource]',
@@ -173,7 +173,7 @@ function createNoiseTexture(args: any): string {
 }
 
 // Helper to create placeholder texture (ImageTexture with generated image)
-function createPlaceholderTexture(args: any): string {
+function createPlaceholderTexture(_args: any): string {
   // For a placeholder, we'll create a simple ImageTexture
   // In a real implementation, we would generate image data
   

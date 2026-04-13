@@ -214,6 +214,7 @@ export class ErrorHandler {
       delete: 'delete',
     };
     
+    void operationMap;
     const errorMessage = error.message || String(error);
     
     if (errorMessage.includes('ENOENT') || errorMessage.includes('not found')) {

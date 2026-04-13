@@ -8,7 +8,7 @@ export interface RegisteredTool {
   name: string;
   description: string;
   category: string;
-  inputSchema: z.ZodType<any>;
+  inputSchema: z.ZodType<any> | Record<string, any>;
   handler: (args: any) => Promise<any>;
   readOnlyHint?: boolean;
   destructiveHint?: boolean;
@@ -174,13 +174,15 @@ export class ToolRegistry {
       async (args: any) => {
         try {
           logger.debug(`Executing tool: ${tool.id}`, args);
-          const validatedArgs = tool.inputSchema.parse(args);
+          const validatedArgs = tool.inputSchema instanceof z.ZodType 
+            ? tool.inputSchema.parse(args) 
+            : args;
           const result = await tool.handler(validatedArgs);
           logger.debug(`Tool ${tool.id} completed successfully`);
           return {
             content: [
               {
-                type: 'text',
+                type: 'text' as const,
                 text: JSON.stringify(result, null, 2),
               },
             ],
@@ -190,7 +192,7 @@ export class ToolRegistry {
           return {
             content: [
               {
-                type: 'text',
+                type: 'text' as const,
                 text: `Error: ${error instanceof Error ? error.message : String(error)}`,
               },
             ],
@@ -205,12 +207,64 @@ export class ToolRegistry {
     return this.tools.get(id);
   }
 
-  getToolsByCategory(categoryId: string): RegisteredTool[] {
-    return Array.from(this.tools.values())
+  getToolsByCategory(categoryId: string, offset: number = 0, limit: number = Infinity): RegisteredTool[] {
+    const categoryTools = Array.from(this.tools.values())
       .filter(tool => tool.category === categoryId);
+    return categoryTools.slice(offset, offset + limit);
   }
 
   getAllTools(): RegisteredTool[] {
     return Array.from(this.tools.values());
+  }
+
+  getCategories(): string[] {
+    const categories = new Set<string>();
+    for (const tool of this.tools.values()) {
+      categories.add(tool.category);
+    }
+    return Array.from(categories).sort();
+  }
+
+  searchTools(query: string, offset: number = 0, limit: number = 20): RegisteredTool[] {
+    const searchQuery = query.toLowerCase();
+    const results: RegisteredTool[] = [];
+    
+    for (const tool of this.tools.values()) {
+      if (
+        tool.id.toLowerCase().includes(searchQuery) ||
+        tool.name.toLowerCase().includes(searchQuery) ||
+        tool.description.toLowerCase().includes(searchQuery) ||
+        tool.category.toLowerCase().includes(searchQuery)
+      ) {
+        results.push(tool);
+      }
+    }
+    
+    return results.slice(offset, offset + limit);
+  }
+
+  async executeTool(toolId: string, args: any): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
+    const tool = this.tools.get(toolId);
+    if (!tool) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: Tool ${toolId} not found` }],
+        isError: true,
+      };
+    }
+
+    try {
+      const validatedArgs = tool.inputSchema instanceof z.ZodType
+        ? tool.inputSchema.parse(args)
+        : args;
+      const result = await tool.handler(validatedArgs);
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result) }],
+      };
+    } catch (error) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: ${error instanceof Error ? error.message : String(error)}` }],
+        isError: true,
+      };
+    }
   }
 }

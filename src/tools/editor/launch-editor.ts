@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
-import { join } from 'path';
+
 
 const launchEditorSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -21,9 +21,8 @@ const closeEditorSchema = z.object({
   force: z.boolean().optional().describe('Force close editor'),
 });
 
-export function createLaunchEditorTool(transport: Transport): RegisteredTool {
+export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
   let editorProcess: any = null;
-  let editorPort = 13337;
   
   return {
     id: 'godot_launch_editor',
@@ -33,21 +32,10 @@ export function createLaunchEditorTool(transport: Transport): RegisteredTool {
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        operation: {
-          type: 'string',
-          enum: ['launch', 'status', 'close'],
-          description: 'Operation to perform',
-        },
-        data: {
-          type: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['launch', 'status', 'close']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       
@@ -58,18 +46,7 @@ export function createLaunchEditorTool(transport: Transport): RegisteredTool {
           // Auto-detect Godot editor path if not provided
           let editorExecutable = validated.editorPath;
           if (!editorExecutable) {
-            // Try common paths
-            const possiblePaths = [
-              'godot',
-              'godot.exe',
-              '/usr/bin/godot',
-              '/usr/local/bin/godot',
-              'C:\\Program Files\\Godot\\Godot.exe',
-              'C:\\Godot\\Godot.exe',
-            ];
-            
-            // In a real implementation, we would check which path exists
-            editorExecutable = 'godot'; // Default
+            editorExecutable = 'godot';
           }
           
           // Build command arguments

@@ -478,7 +478,7 @@ export class SceneParser {
       
       // Write script if present
       if (node.script) {
-        const scriptValue = typeof node.script === 'string' ? node.script : node.script.path;
+        const scriptValue = typeof node.script === 'string' ? node.script : node.script?.path ?? '';
         lines.push(`script = ExtResource("${scriptValue}")`);
       }
       
@@ -508,7 +508,16 @@ export class SceneParser {
       if (node.children && node.children.length > 0) {
         const currentPath = parentPath === '.' ? node.name : `${parentPath}/${node.name}`;
         for (const child of node.children) {
-          writeNode(child, currentPath, depth + 1);
+          const childNode: NodeInfo = 'name' in child ? (child as NodeInfo) : {
+            name: (child as any).name || (child as any).path || '',
+            type: 'Node',
+            path: { path: (child as any).path || '' },
+            children: [],
+            properties: {},
+            groups: [],
+            metadata: {},
+          };
+          writeNode(childNode, currentPath, depth + 1);
         }
       }
     };
@@ -538,11 +547,6 @@ export class SceneParser {
     }
     
     return lines.join('\n');
-  }
-
-  private static getParentPath(path: string): string {
-    const lastDot = path.lastIndexOf('/');
-    return lastDot === -1 ? '.' : path.substring(0, lastDot);
   }
 
   private static serializeValue(value: any): string {
@@ -608,9 +612,14 @@ export class SceneParser {
 
     const pathParts = nodePath.split('/').filter(part => part !== '');
     
-    let currentNode = sceneInfo.root;
+    let currentNode: NodeInfo = sceneInfo.root;
     for (const part of pathParts) {
-      const child = currentNode.children?.find(child => child.name === part);
+      const child = currentNode.children?.find(child => {
+        if ('name' in child && typeof (child as NodeInfo).name === 'string') {
+          return (child as NodeInfo).name === part;
+        }
+        return false;
+      }) as NodeInfo | undefined;
       if (!child) {
         return null;
       }
@@ -627,16 +636,16 @@ export class SceneParser {
 
     const targetName = pathParts[currentIndex];
     
-    // Check if current node matches
     if (node.name === targetName) {
       if (currentIndex === pathParts.length - 1) {
         return node;
       }
       
-      // Continue searching in children
       if (node.children) {
         for (const child of node.children) {
-          const result = this.findNodeByPathRecursive(child, pathParts, currentIndex + 1);
+          const childNode = 'name' in child ? (child as NodeInfo) : undefined;
+          if (!childNode) continue;
+          const result = this.findNodeByPathRecursive(childNode, pathParts, currentIndex + 1);
           if (result) {
             return result;
           }
@@ -644,10 +653,11 @@ export class SceneParser {
       }
     }
     
-    // Check children for the first path part
     if (currentIndex === 0 && node.children) {
       for (const child of node.children) {
-        const result = this.findNodeByPathRecursive(child, pathParts, currentIndex);
+        const childNode = 'name' in child ? (child as NodeInfo) : undefined;
+        if (!childNode) continue;
+        const result = this.findNodeByPathRecursive(childNode, pathParts, currentIndex);
         if (result) {
           return result;
         }

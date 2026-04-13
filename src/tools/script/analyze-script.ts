@@ -166,10 +166,10 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
             const values: Record<string, any> = {};
             
             if (valuesStr) {
-              const valuePairs = valuesStr.split(',').map(v => v.trim());
+              const valuePairs = valuesStr.split(',').map((v: any) => v.trim());
               for (const pair of valuePairs) {
                 if (pair.includes('=')) {
-                  const [key, value] = pair.split('=').map(s => s.trim());
+                  const [key, value] = pair.split('=').map((s: any) => s.trim());
                   values[key] = value;
                 } else if (pair) {
                   values[pair] = Object.keys(values).length;
@@ -235,11 +235,11 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
             
             const parameters: Array<{name: string, type?: string}> = [];
             if (paramsStr) {
-              const paramList = paramsStr.split(',').map(p => p.trim());
+              const paramList = paramsStr.split(',').map((p: any) => p.trim());
               for (const param of paramList) {
                 if (param) {
                   if (param.includes(':')) {
-                    const [name, type] = param.split(':').map(s => s.trim());
+                    const [name, type] = param.split(':').map((s: any) => s.trim());
                     parameters.push({ name, type });
                   } else {
                     parameters.push({ name: param });
@@ -354,11 +354,11 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
       }
 
       // Check for unused variables (simple check)
-      const usedVariables = new Set<string>();
-      const scriptText = scriptContent.toLowerCase();
+      new Set<string>();
+      scriptContent.toLowerCase();
       
       for (const variable of analysis.variables) {
-        const varName = variable.name.toLowerCase();
+        variable.name.toLowerCase();
         // Count occurrences (excluding declaration)
         const declarationPattern = new RegExp(`(?:var|const)\\s+${variable.name}\\b`, 'g');
         const declarationMatches = scriptContent.match(declarationPattern) || [];

@@ -215,12 +215,9 @@ func _get_node_properties(node: Node) -> Dictionary:
 		if name in properties:
 			continue
 		
-		try:
-			var value = node.get(name)
-			if value != null:
-				properties[name] = _convert_godot_value(value)
-		except:
-			pass
+		var value = node.get(name)
+		if value != null:
+			properties[name] = _convert_godot_value(value)
 	
 	return properties
 
@@ -260,13 +257,10 @@ func _set_node_property(node: Node, key: String, value) -> bool:
 	if not node.has_property(key):
 		return false
 	
-	try:
-		# Convert value to appropriate Godot type
-		var godot_value = _convert_to_godot_value(value, node.get_property(key))
-		node.set(key, godot_value)
-		return true
-	except:
-		return false
+	# Convert value to appropriate Godot type
+	var godot_value = _convert_to_godot_value(value, node.get_property(key))
+	node.set(key, godot_value)
+	return true
 
 func _convert_godot_value(value):
 	if value is Vector2:

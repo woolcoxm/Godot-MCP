@@ -1,7 +1,7 @@
 import { Transport, TransportOperation } from '../transports/transport.js';
 import { SceneParser } from './scene-parser.js';
 import { ResourceParser } from './resource-parser.js';
-import { SceneInfo, NodeInfo } from '../types/godot.js';
+import { NodeInfo } from '../types/godot.js';
 
 export class IdempotencyChecker {
   /**

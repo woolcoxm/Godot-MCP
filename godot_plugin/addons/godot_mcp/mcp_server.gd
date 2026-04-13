@@ -2,7 +2,7 @@
 extends Node
 
 # WebSocket server for MCP communication
-var server = null
+var server: WebSocketMultiplayerPeer = null
 var peers = {}
 var server_port = 13337
 var is_running = false
@@ -25,8 +25,8 @@ func start_server() -> bool:
 		print("[MCP Server] Server already running")
 		return true
 	
-	server = WebSocketPeer.new()
-	var error = server.listen(server_port, [], true)
+	server = WebSocketMultiplayerPeer.new()
+	var error = server.create_server(server_port)
 	
 	if error != OK:
 		print("[MCP Server] Failed to start server on port ", server_port, ": ", error_string(error))
@@ -39,7 +39,7 @@ func start_server() -> bool:
 
 func stop_server():
 	if server:
-		server.stop()
+		server.close()
 		server = null
 	
 	# Close all peer connections
@@ -56,64 +56,58 @@ func is_server_running() -> bool:
 	return is_running
 
 func get_connection_count() -> int:
-	return peers.size()
+	if server:
+		return server.get_connected_peers().size()
+	return 0
 
 func _process(_delta):
 	if not is_running or not server:
 		return
 	
-	# Accept new connections
-	while server.is_listening() and server.get_available_packet_count() > 0:
-		var peer = server.take_connection()
-		if peer:
-			var peer_id = peer.get_unique_id()
-			peers[peer_id] = peer
-			print("[MCP Server] New connection: ", peer_id)
+	server.poll()
 	
-	# Process messages from all peers
-	for peer_id in peers:
-		var peer = peers[peer_id]
-		if not peer:
-			continue
-		
-		if peer.get_ready_state() == WebSocketPeer.STATE_CLOSED:
-			print("[MCP Server] Connection closed: ", peer_id)
-			peers.erase(peer_id)
-			continue
-		
-		# Process incoming messages
-		while peer.get_available_packet_count() > 0:
-			var packet = peer.get_packet()
+	# Check for new connections and messages
+	while server.get_available_packet_count() > 0:
+		var result = server.receive_packet()
+		if result is Array and result.size() >= 2:
+			var peer_id = result[0]
+			var packet = result[1]
+			
+			if not peers.has(peer_id):
+				peers[peer_id] = true
+				print("[MCP Server] New connection: ", peer_id)
+			
+			# Process the message
 			var message = packet.get_string_from_utf8()
 			_process_message(peer_id, message)
+	
+	# Check for disconnected peers
+	for peer_id in peers.keys():
+		if not server.is_peer_connected(peer_id):
+			print("[MCP Server] Connection closed: ", peer_id)
+			peers.erase(peer_id)
 
 func _process_message(peer_id: int, message: String):
 	print("[MCP Server] Received from ", peer_id, ": ", message)
 	
 	var response = {}
 	
-	try:
-		var json = JSON.new()
-		var error = json.parse(message)
-		if error != OK:
-			response = {
-				"error": "Invalid JSON: " + json.get_error_message(),
-				"success": false
-			}
-		else:
-			var data = json.get_data()
-			response = _handle_operation(data)
-	except:
+	var json = JSON.new()
+	var error = json.parse(message)
+	if error != OK:
 		response = {
-			"error": "Exception processing message",
+			"error": "Invalid JSON: " + json.get_error_message(),
 			"success": false
 		}
+	else:
+		var data = json.get_data()
+		response = _handle_operation(data)
 	
 	# Send response
-	var peer = peers.get(peer_id)
-	if peer:
+	if server and server.is_peer_connected(peer_id):
 		var response_json = JSON.stringify(response)
-		peer.put_packet(response_json.to_utf8_buffer())
+		# Use send_packet() which takes peer_id and packet
+		server.send_packet(peer_id, response_json.to_utf8_buffer())
 		print("[MCP Server] Sent to ", peer_id, ": ", response_json)
 
 func _handle_operation(data: Dictionary) -> Dictionary:

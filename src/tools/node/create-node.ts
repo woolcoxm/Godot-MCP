@@ -42,11 +42,11 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
             ([key, value]) => node.properties[key] === value
           );
           
-          const scriptMatch = !args.script || node.script?.path === args.script;
+          const scriptMatch = !args.script || (typeof node.script === 'string' ? node.script === args.script : node.script?.path === args.script);
           
           const groupsMatch = !args.groups || (
             node.groups && 
-            args.groups.every(group => node.groups!.includes(group))
+            args.groups.every((group: string) => node.groups!.includes(group))
           );
           
           if (propertiesMatch && scriptMatch && groupsMatch) {
@@ -95,7 +95,7 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
       }
       
       // Check if node with same name already exists in parent
-      if (parentNode.children?.some(child => child.name === args.nodeName)) {
+      if (parentNode.children?.some((child: any) => child.name === args.nodeName)) {
         throw new Error(`Node with name "${args.nodeName}" already exists in parent ${args.parentPath}`);
       }
       

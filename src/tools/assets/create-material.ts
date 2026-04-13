@@ -215,7 +215,7 @@ function createCanvasItemMaterial(args: any): string {
 }
 
 // Helper to create ParticlesMaterial
-function createParticlesMaterial(args: any): string {
+function createParticlesMaterial(_args: any): string {
   const material = [
     '[gd_resource type="ParticlesMaterial" load_steps=1 format=3]',
     '',

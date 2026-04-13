@@ -2,13 +2,13 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { logger } from './utils/logger.js';
 import { ToolRegistry } from './tools/registry.js';
-import { Transport, TransportMode } from './transports/transport.js';
+import { Transport } from './transports/transport.js';
 import { registerAllTools } from './tools/register-tools.js';
 
 export class GodotMCPServer {
   private server: McpServer;
   private transport: StdioServerTransport | null = null;
-  private godotTransport: Transport;
+  private godotTransport!: Transport;
   private registry: ToolRegistry;
 
   constructor() {
@@ -17,14 +17,14 @@ export class GodotMCPServer {
       version: '1.0.0',
     });
 
-    // Initialize transport (auto-detect or use headless by default)
-    this.godotTransport = new Transport({ mode: TransportMode.HEADLESS });
+    // Initialize transport with auto-detection
+    // We'll create it in start() method to handle async auto-detection
     
     // Initialize tool registry
     this.registry = new ToolRegistry(this.server);
     
-    // Register all tools
-    registerAllTools(this.registry, this.godotTransport);
+    // Note: Transport will be set in start() method
+    // Tools will be registered after transport is initialized
 
     this.setupServerInstructions();
     this.setupErrorHandling();
@@ -42,9 +42,20 @@ export class GodotMCPServer {
 
   async start(): Promise<void> {
     try {
+      // Initialize transport with auto-detection
+      this.godotTransport = await Transport.autoDetect({
+        editorPort: parseInt(process.env.GODOT_EDITOR_PORT || '13337'),
+        runtimePort: parseInt(process.env.GODOT_RUNTIME_PORT || '13338')
+      });
+      
+      // Register all tools with the transport
+      registerAllTools(this.registry, this.godotTransport);
+      
+      // Connect MCP server
       this.transport = new StdioServerTransport();
       await this.server.connect(this.transport);
       logger.info('Godot MCP Server started');
+      logger.info(`Transport mode: ${this.godotTransport.getMode()}`);
     } catch (error) {
       logger.error('Failed to start MCP Server:', error);
       throw error;

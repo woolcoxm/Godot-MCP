@@ -21,9 +21,8 @@ const projectStatusSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
 });
 
-export function createRunProjectTool(transport: Transport): RegisteredTool {
+export function createRunProjectTool(_transport: Transport): RegisteredTool {
   let projectProcess: any = null;
-  let runtimePort = 13338;
   
   return {
     id: 'godot_run_project',
@@ -33,21 +32,10 @@ export function createRunProjectTool(transport: Transport): RegisteredTool {
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        operation: {
-          type: 'string',
-          enum: ['run', 'stop', 'status'],
-          description: 'Operation to perform',
-        },
-        data: {
-          type: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['run', 'stop', 'status']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       

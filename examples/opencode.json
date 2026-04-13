@@ -1,17 +1,16 @@
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "godot-mcp": {
-      "command": "node",
-      "args": [
-        "dist/index.js"
-      ],
-      "env": {
-        "GODOT_PATH": "C:/Program Files/Godot/Godot_v4.3.exe",
-        "GODOT_MCP_LOG_LEVEL": "info",
-        "GODOT_MCP_EDITOR_PORT": "13337",
-        "GODOT_MCP_RUNTIME_PORT": "13338"
-      },
-      "cwd": "."
+      "type": "local",
+      "command": ["node", "dist/index.js"],
+      "enabled": true,
+      "environment": {
+        "GODOT_PATH": "C:/Users/woolc/Downloads/Godot/Godot_v4.6.2-stable_win64.exe",
+        "GODOT_LOG_LEVEL": "info",
+        "GODOT_EDITOR_PORT": "13337",
+        "GODOT_RUNTIME_PORT": "13338"
+      }
     }
   }
 }

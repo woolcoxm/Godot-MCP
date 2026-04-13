@@ -1,4 +1,6 @@
 
+import { WebSocket } from 'ws';
+import { logger } from '../utils/logger.js';
 
 export interface EditorBridgeOptions {
   host?: string;
@@ -46,7 +48,7 @@ export class EditorBridge {
         this.ws = new WebSocket(url);
         
         this.ws.onopen = () => {
-          console.log(`[EditorBridge] Connected to editor at ${url}`);
+          logger.debug(`[EditorBridge] Connected to editor at ${url}`);
           this.isConnected = true;
           this.reconnectAttempts = 0;
           this.flushMessageQueue();
@@ -54,23 +56,31 @@ export class EditorBridge {
         };
         
         this.ws.onclose = (event) => {
-          console.log(`[EditorBridge] Connection closed: ${event.code} ${event.reason}`);
+          logger.debug(`[EditorBridge] Connection closed: ${event.code} ${event.reason}`);
           this.isConnected = false;
           this.handleDisconnection();
           resolve(false);
         };
         
         this.ws.onerror = (error) => {
-          console.error('[EditorBridge] WebSocket error:', error);
+          logger.debug('[EditorBridge] WebSocket error:', error.message || error);
           this.isConnected = false;
           resolve(false);
         };
         
         this.ws.onmessage = (event) => {
-          this.handleMessage(event.data);
+          let rawData: string;
+          if (Buffer.isBuffer(event.data)) {
+            rawData = event.data.toString('utf8');
+          } else if (typeof event.data === 'string') {
+            rawData = event.data;
+          } else {
+            rawData = Buffer.from(event.data as ArrayBuffer).toString('utf8');
+          }
+          this.handleMessage(rawData);
         };
       } catch (error) {
-        console.error('[EditorBridge] Failed to create WebSocket:', error);
+        logger.debug('[EditorBridge] Failed to create WebSocket:', error instanceof Error ? error.message : String(error));
         resolve(false);
       }
     });
@@ -115,7 +125,7 @@ export class EditorBridge {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
-      console.error('[EditorBridge] Cannot send message, WebSocket not open');
+          logger.error('[EditorBridge] Cannot send message, WebSocket not open');
       const pending = this.pendingMessages.get(message.id);
       if (pending) {
         pending.reject(new Error('WebSocket not connected'));
@@ -138,10 +148,10 @@ export class EditorBridge {
           pending.reject(new Error(result.error || 'Unknown error'));
         }
       } else {
-        console.warn('[EditorBridge] Received message without ID or unknown ID:', result);
+        logger.warn('[EditorBridge] Received message without ID or unknown ID:', result);
       }
     } catch (error) {
-      console.error('[EditorBridge] Failed to parse message:', error, 'Data:', data);
+        logger.error('[EditorBridge] Failed to parse message:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -165,13 +175,13 @@ export class EditorBridge {
     // Attempt reconnection
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`[EditorBridge] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+      logger.debug(`[EditorBridge] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
       
       setTimeout(() => {
         this.connect();
       }, this.reconnectInterval);
     } else {
-      console.error('[EditorBridge] Max reconnection attempts reached');
+      logger.error('[EditorBridge] Max reconnection attempts reached');
     }
   }
 
