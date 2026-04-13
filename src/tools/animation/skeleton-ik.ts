@@ -74,21 +74,10 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      operation: 'object',
-      properties: {
-        operation: {
-          operation: 'string',
-          enum: ['create', 'configure', 'start_stop'],
-          description: 'Operation to perform',
-        },
-        params: {
-          operation: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['create', 'configure', 'start_stop']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       
@@ -108,7 +97,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {
@@ -131,7 +120,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {
@@ -155,7 +144,7 @@ export function createSkeletonIKTool(transport: Transport): RegisteredTool {
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {

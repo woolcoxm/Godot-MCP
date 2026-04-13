@@ -135,7 +135,7 @@ describe('Full Game Creation Workflow', () => {
   
   it('should create a complete 2D platformer game', async () => {
     // Step 1: Create project
-    const projectResult = await registry.executeTool('godot_create_project', {
+    const projectResult = await registry.getTool('godot_create_project')!.handler({
       name: 'PlatformerGame',
       path: 'C:/Games/Platformer',
       renderer: 'forward_plus',
@@ -145,7 +145,7 @@ describe('Full Game Creation Workflow', () => {
     expect(projectResult.content[0].text).toContain('Created project');
     
     // Step 2: Create main scene
-    const sceneResult = await registry.executeTool('godot_create_scene', {
+    const sceneResult = await registry.getTool('godot_create_scene')!.handler({
       path: 'res://scenes/Main.tscn',
       name: 'Main',
       rootNodeType: 'Node2D'
@@ -154,7 +154,7 @@ describe('Full Game Creation Workflow', () => {
     expect(sceneResult.content[0].text).toContain('Created scene');
     
     // Step 3: Create player character
-    const playerResult = await registry.executeTool('godot_create_node', {
+    const playerResult = await registry.getTool('godot_create_node')!.handler({
       parentPath: '.',
       nodeType: 'CharacterBody2D',
       name: 'Player',
@@ -167,7 +167,7 @@ describe('Full Game Creation Workflow', () => {
     expect(playerResult.content[0].text).toContain('Created CharacterBody2D');
     
     // Step 4: Create player sprite
-    const spriteResult = await registry.executeTool('godot_create_sprite2d', {
+    const spriteResult = await registry.getTool('godot_create_sprite2d')!.handler({
       parentPath: './Player',
       texturePath: 'res://assets/player.png',
       name: 'Sprite',
@@ -178,7 +178,7 @@ describe('Full Game Creation Workflow', () => {
     expect(spriteResult.content[0].text).toContain('Created Sprite2D');
     
     // Step 5: Create player script
-    const scriptResult = await registry.executeTool('godot_create_script', {
+    const scriptResult = await registry.getTool('godot_create_script')!.handler({
       path: 'res://scripts/player.gd',
       name: 'PlayerController',
       extends: 'CharacterBody2D',
@@ -212,7 +212,7 @@ func _physics_process(delta):
     expect(scriptResult.content[0].text).toContain('Created script');
     
     // Step 6: Create UI controls
-    const uiResult = await registry.executeTool('godot_create_control', {
+    const uiResult = await registry.getTool('godot_create_control')!.handler({
       parentPath: '.',
       controlType: 'Label',
       name: 'ScoreLabel',
@@ -224,7 +224,7 @@ func _physics_process(delta):
     expect(uiResult.content[0].text).toContain('Created Label');
     
     // Step 7: Create audio system
-    const audioResult = await registry.executeTool('godot_create_audio_player', {
+    const audioResult = await registry.getTool('godot_create_audio_player')!.handler({
       parentPath: '.',
       playerType: 'AudioStreamPlayer',
       name: 'BackgroundMusic',
@@ -237,7 +237,7 @@ func _physics_process(delta):
     expect(audioResult.content[0].text).toContain('Created AudioStreamPlayer');
     
     // Step 8: Add audio effect
-    const effectResult = await registry.executeTool('godot_create_audio_effect', {
+    const effectResult = await registry.getTool('godot_create_audio_effect')!.handler({
       busIndex: 0,
       effectType: 'Reverb',
       name: 'MainReverb',
@@ -250,7 +250,7 @@ func _physics_process(delta):
     expect(effectResult.content[0].text).toContain('Created Reverb effect');
     
     // Step 9: Create multiplayer RPC method
-    const rpcResult = await registry.executeTool('godot_manage_rpc_packet', {
+    const rpcResult = await registry.getTool('godot_manage_rpc_packet')!.handler({
       scriptPath: 'res://scripts/player.gd',
       methodName: 'sync_position',
       rpcMode: 'Authority',
@@ -263,7 +263,7 @@ func _physics_process(delta):
     expect(rpcResult.content[0].text).toContain('Added RPC annotation');
     
     // Step 10: Export the game
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.getTool('godot_export_project')!.handler({
       presetName: 'Windows Release',
       platform: 'Windows Desktop',
       exportPath: 'build/PlatformerGame.exe',
@@ -286,7 +286,7 @@ func _physics_process(delta):
   
   it('should create a 3D first-person shooter game', async () => {
     // Step 1: Create project
-    await registry.executeTool('godot_create_project', {
+    await registry.getTool('godot_create_project')!.handler({
       name: 'FPSGame',
       path: 'C:/Games/FPS',
       renderer: 'vulkan',
@@ -294,14 +294,14 @@ func _physics_process(delta):
     });
     
     // Step 2: Create 3D scene
-    await registry.executeTool('godot_create_scene', {
+    await registry.getTool('godot_create_scene')!.handler({
       path: 'res://scenes/World.tscn',
       name: 'World',
       rootNodeType: 'Node3D'
     });
     
     // Step 3: Create player with 3D camera
-    await registry.executeTool('godot_create_node', {
+    await registry.getTool('godot_create_node')!.handler({
       parentPath: '.',
       nodeType: 'CharacterBody3D',
       name: 'Player',
@@ -311,7 +311,7 @@ func _physics_process(delta):
     });
     
     // Step 4: Create FPS camera
-    await registry.executeTool('godot_create_camera3d', {
+    await registry.getTool('godot_create_camera3d')!.handler({
       parentPath: './Player',
       name: 'Camera',
       fov: 70,
@@ -322,7 +322,7 @@ func _physics_process(delta):
     });
     
     // Step 5: Create weapon mesh
-    await registry.executeTool('godot_create_mesh_instance', {
+    await registry.getTool('godot_create_mesh_instance')!.handler({
       parentPath: './Player/Camera',
       name: 'Weapon',
       meshType: 'Cube',
@@ -333,7 +333,7 @@ func _physics_process(delta):
     });
     
     // Step 6: Create lighting
-    await registry.executeTool('godot_create_lighting', {
+    await registry.getTool('godot_create_lighting')!.handler({
       parentPath: '.',
       lightType: 'DirectionalLight3D',
       name: 'Sun',
@@ -346,7 +346,7 @@ func _physics_process(delta):
     });
     
     // Step 7: Create environment
-    await registry.executeTool('godot_create_environment', {
+    await registry.getTool('godot_create_environment')!.handler({
       parentPath: '.',
       name: 'WorldEnvironment',
       skyMode: 'ProceduralSky',
@@ -355,7 +355,7 @@ func _physics_process(delta):
     });
     
     // Step 8: Create UI for health and ammo
-    await registry.executeTool('godot_create_control', {
+    await registry.getTool('godot_create_control')!.handler({
       parentPath: '.',
       controlType: 'ProgressBar',
       name: 'HealthBar',
@@ -368,7 +368,7 @@ func _physics_process(delta):
     });
     
     // Step 9: Create multiplayer spawner
-    await registry.executeTool('godot_create_multiplayer', {
+    await registry.getTool('godot_create_multiplayer')!.handler({
       parentPath: '.',
       nodeType: 'MultiplayerSpawner',
       name: 'PlayerSpawner',
@@ -378,7 +378,7 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for multiple platforms
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.getTool('godot_export_project')!.handler({
       presetName: 'Multiplatform',
       platform: 'Windows Desktop',
       exportPath: 'build/FPSGame.exe',
@@ -392,7 +392,7 @@ func _physics_process(delta):
   
   it('should create a UI-heavy strategy game', async () => {
     // Step 1: Create project
-    await registry.executeTool('godot_create_project', {
+    await registry.getTool('godot_create_project')!.handler({
       name: 'StrategyGame',
       path: 'C:/Games/Strategy',
       renderer: 'forward_plus',
@@ -400,14 +400,14 @@ func _physics_process(delta):
     });
     
     // Step 2: Create UI scene
-    await registry.executeTool('godot_create_scene', {
+    await registry.getTool('godot_create_scene')!.handler({
       path: 'res://scenes/UI.tscn',
       name: 'UI',
       rootNodeType: 'Control'
     });
     
     // Step 3: Create tabbed interface
-    await registry.executeTool('godot_create_tab_menu', {
+    await registry.getTool('godot_create_tab_menu')!.handler({
       parentPath: '.',
       controlType: 'TabContainer',
       name: 'MainTabs',
@@ -422,7 +422,7 @@ func _physics_process(delta):
     });
     
     // Step 4: Create resource panel
-    await registry.executeTool('godot_create_control', {
+    await registry.getTool('godot_create_control')!.handler({
       parentPath: './MainTabs',
       controlType: 'VBoxContainer',
       name: 'ResourcePanel',
@@ -432,7 +432,7 @@ func _physics_process(delta):
     // Step 5: Create resource items
     const resources = ['Gold', 'Wood', 'Stone', 'Food'];
     for (const resource of resources) {
-      await registry.executeTool('godot_create_control', {
+      await registry.getTool('godot_create_control')!.handler({
         parentPath: './MainTabs/ResourcePanel',
         controlType: 'HBoxContainer',
         name: `${resource}Row`,
@@ -441,7 +441,7 @@ func _physics_process(delta):
         }
       });
       
-      await registry.executeTool('godot_create_control', {
+      await registry.getTool('godot_create_control')!.handler({
         parentPath: `./MainTabs/ResourcePanel/${resource}Row`,
         controlType: 'Label',
         name: `${resource}Label`,
@@ -449,7 +449,7 @@ func _physics_process(delta):
         size: { x: 100, y: 30 }
       });
       
-      await registry.executeTool('godot_create_text_range', {
+      await registry.getTool('godot_create_text_range')!.handler({
         parentPath: `./MainTabs/ResourcePanel/${resource}Row`,
         controlType: 'SpinBox',
         name: `${resource}Value`,
@@ -461,7 +461,7 @@ func _physics_process(delta):
     }
     
     // Step 6: Create tree view for unit hierarchy
-    await registry.executeTool('godot_create_tree_itemlist', {
+    await registry.getTool('godot_create_tree_itemlist')!.handler({
       parentPath: './MainTabs',
       controlType: 'Tree',
       name: 'UnitTree',
@@ -491,7 +491,7 @@ func _physics_process(delta):
     });
     
     // Step 7: Create popup dialogs
-    await registry.executeTool('godot_create_popup', {
+    await registry.getTool('godot_create_popup')!.handler({
       parentPath: '.',
       popupType: 'ConfirmationDialog',
       name: 'SaveDialog',
@@ -502,7 +502,7 @@ func _physics_process(delta):
     });
     
     // Step 8: Create theme
-    await registry.executeTool('godot_create_theme', {
+    await registry.getTool('godot_create_theme')!.handler({
       path: 'res://themes/strategy.tres',
       themeType: 'Theme',
       colors: {
@@ -519,13 +519,13 @@ func _physics_process(delta):
     });
     
     // Step 9: Apply theme
-    await registry.executeTool('godot_apply_theme', {
+    await registry.getTool('godot_apply_theme')!.handler({
       controlPath: '.',
       themePath: 'res://themes/strategy.tres'
     });
     
     // Step 10: Export for web
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.getTool('godot_export_project')!.handler({
       presetName: 'Web Export',
       platform: 'Web',
       exportPath: 'build/StrategyGame.html',

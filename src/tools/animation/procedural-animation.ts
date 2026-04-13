@@ -20,7 +20,7 @@ const proceduralAnimationSchema = z.object({
     gain: z.number().optional().describe('Noise gain'),
     // Wave animation properties
     amplitude: z.number().optional().describe('Wave amplitude'),
-    frequency: z.number().optional().describe('Wave frequency'),
+    waveFrequency: z.number().optional().describe('Wave frequency'),
     phase: z.number().optional().describe('Wave phase'),
     offset: z.number().optional().describe('Wave offset'),
     // Interpolation properties
@@ -66,7 +66,7 @@ const configureProceduralAnimationSchema = z.object({
     lacunarity: z.number().optional().describe('Noise lacunarity'),
     gain: z.number().optional().describe('Noise gain'),
     amplitude: z.number().optional().describe('Wave amplitude'),
-    frequency: z.number().optional().describe('Wave frequency'),
+    waveFrequency: z.number().optional().describe('Wave frequency'),
     phase: z.number().optional().describe('Wave phase'),
     offset: z.number().optional().describe('Wave offset'),
     duration: z.number().optional().describe('Animation duration'),
@@ -105,21 +105,10 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      operation: 'object',
-      properties: {
-        operation: {
-          operation: 'string',
-          enum: ['create', 'configure', 'control'],
-          description: 'Operation to perform',
-        },
-        params: {
-          operation: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['create', 'configure', 'control']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       
@@ -145,7 +134,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {
@@ -168,7 +157,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {
@@ -218,7 +207,7 @@ export function createProceduralAnimationTool(transport: Transport): RegisteredT
             },
           };
           
-          const result = await transport.execute(op);
+          await transport.execute(op);
           return {
             content: [
               {

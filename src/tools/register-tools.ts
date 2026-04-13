@@ -7,26 +7,26 @@ import { createSaveSceneTool } from './scene/save-scene.js';
 import { createSceneTreeTool } from './scene/scene-tree.js';
 import { createBatchOperationsTool } from './scene/batch-operations.js';
 import { createCreateProjectTool } from './project/create-project.js';
-import { createInputMapTool } from './project/input-map.js';
-import { createAutoloadsTool } from './project/autoloads.js';
-import { createPluginsTool } from './project/plugins.js';
-import { createTranslationsTool } from './project/translations.js';
+import { createAddInputActionTool, createRemoveInputActionTool, createListInputActionsTool, createModifyInputActionTool } from './project/input-map.js';
+import { createAddAutoloadTool, createRemoveAutoloadTool, createListAutoloadsTool, createModifyAutoloadTool } from './project/autoloads.js';
+import { createEnablePluginTool, createDisablePluginTool, createListPluginsTool, createConfigurePluginTool } from './project/plugins.js';
+import { createAddTranslationTool, createListTranslationsTool } from './project/translations.js';
 import { createCreateNodeTool } from './node/create-node.js';
 import { createModifyNodeTool } from './node/modify-node.js';
 import { createDeleteNodeTool } from './node/delete-node.js';
 import { createNodePropertiesTool } from './node/properties.js';
-import { createSignalsTool } from './node/signals.js';
-import { createGroupsTool } from './node/groups.js';
-import { createAdditionalOpsTool } from './node/additional-ops.js';
+import { createConnectSignalTool, createDisconnectSignalTool, createListSignalsTool } from './node/signals.js';
+import { createAddToGroupTool, createRemoveFromGroupTool, createListNodeGroupsTool, createListGroupNodesTool } from './node/groups.js';
+import { createReparentNodeTool, createFindNodeTool, createListChildrenTool, createMoveNodeOrderTool, createDuplicateNodeTool } from './node/additional-ops.js';
 import { createCreateScriptTool } from './script/create-script.js';
 import { createReadScriptTool } from './script/read-script.js';
 import { createModifyScriptTool } from './script/modify-script.js';
 import { createAnalyzeScriptTool } from './script/analyze-script.js';
 import { createAttachScriptTool } from './script/attach-script.js';
 import { createImportAssetTool } from './assets/import-asset.js';
-import { createMaterialTool } from './assets/create-material.js';
-import { createShaderTool } from './assets/create-shader.js';
-import { createTextureTool } from './assets/create-texture.js';
+import { createCreateMaterialTool } from './assets/create-material.js';
+import { createCreateShaderTool } from './assets/create-shader.js';
+import { createCreateTextureTool } from './assets/create-texture.js';
 import { createProceduralMeshTool } from './assets/procedural-mesh.js';
 import { createCSGOpsTool } from './3d/csg-ops.js';
 import { createMeshInstanceTool } from './3d/mesh-instance.js';
@@ -91,10 +91,20 @@ import { createDocsResourceTool } from './resources/docs-resource.js';
 export function registerAllTools(registry: ToolRegistry, transport: Transport): void {
   // Project tools
   registry.registerTool(createCreateProjectTool(transport));
-  registry.registerTool(createInputMapTool(transport));
-  registry.registerTool(createAutoloadsTool(transport));
-  registry.registerTool(createPluginsTool(transport));
-  registry.registerTool(createTranslationsTool(transport));
+  registry.registerTool(createAddInputActionTool(transport));
+  registry.registerTool(createRemoveInputActionTool(transport));
+  registry.registerTool(createListInputActionsTool(transport));
+  registry.registerTool(createModifyInputActionTool(transport));
+  registry.registerTool(createAddAutoloadTool(transport));
+  registry.registerTool(createRemoveAutoloadTool(transport));
+  registry.registerTool(createListAutoloadsTool(transport));
+  registry.registerTool(createModifyAutoloadTool(transport));
+  registry.registerTool(createEnablePluginTool(transport));
+  registry.registerTool(createDisablePluginTool(transport));
+  registry.registerTool(createListPluginsTool(transport));
+  registry.registerTool(createConfigurePluginTool(transport));
+  registry.registerTool(createAddTranslationTool(transport));
+  registry.registerTool(createListTranslationsTool(transport));
   
   // Scene tools
   registry.registerTool(createCreateSceneTool(transport));
@@ -109,9 +119,18 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   registry.registerTool(createModifyNodeTool(transport));
   registry.registerTool(createDeleteNodeTool(transport));
   registry.registerTool(createNodePropertiesTool(transport));
-  registry.registerTool(createSignalsTool(transport));
-  registry.registerTool(createGroupsTool(transport));
-  registry.registerTool(createAdditionalOpsTool(transport));
+  registry.registerTool(createConnectSignalTool(transport));
+  registry.registerTool(createDisconnectSignalTool(transport));
+  registry.registerTool(createListSignalsTool(transport));
+  registry.registerTool(createAddToGroupTool(transport));
+  registry.registerTool(createRemoveFromGroupTool(transport));
+  registry.registerTool(createListNodeGroupsTool(transport));
+  registry.registerTool(createListGroupNodesTool(transport));
+  registry.registerTool(createReparentNodeTool(transport));
+  registry.registerTool(createFindNodeTool(transport));
+  registry.registerTool(createListChildrenTool(transport));
+  registry.registerTool(createMoveNodeOrderTool(transport));
+  registry.registerTool(createDuplicateNodeTool(transport));
   
   // Script tools
   registry.registerTool(createCreateScriptTool(transport));
@@ -122,9 +141,9 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   
   // Asset tools
   registry.registerTool(createImportAssetTool(transport));
-  registry.registerTool(createMaterialTool(transport));
-  registry.registerTool(createShaderTool(transport));
-  registry.registerTool(createTextureTool(transport));
+  registry.registerTool(createCreateMaterialTool(transport));
+  registry.registerTool(createCreateShaderTool(transport));
+  registry.registerTool(createCreateTextureTool(transport));
   registry.registerTool(createProceduralMeshTool(transport));
   
   // 3D tools

@@ -35,21 +35,10 @@ export function createEditorStateTool(transport: Transport): RegisteredTool {
     destructiveHint: false,
     readOnlyHint: false,
     idempotentHint: true,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        operation: {
-          type: 'string',
-          enum: ['get_state', 'set_selection', 'open_scene', 'open_script'],
-          description: 'Operation to perform',
-        },
-        data: {
-          type: 'object',
-          description: 'Operation data',
-        },
-      },
-      required: ['operation', 'data'],
-    },
+    inputSchema: z.object({
+      operation: z.enum(['get_state', 'set_selection', 'open_scene', 'open_script']).describe('Operation to perform'),
+      data: z.record(z.string(), z.any()).optional().describe('Operation data'),
+    }),
     handler: async (args: any) => {
       const { operation, data } = args;
       
