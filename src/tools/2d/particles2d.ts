@@ -119,6 +119,7 @@ export function createParticles2DTool(transport: Transport): RegisteredTool {
         properties: particlesConfig.properties,
         transform: args.transform,
         message: `Created ${args.particlesType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

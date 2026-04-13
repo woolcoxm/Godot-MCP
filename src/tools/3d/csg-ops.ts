@@ -66,6 +66,7 @@ export function createCSGOpsTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }
 

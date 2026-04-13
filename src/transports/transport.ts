@@ -1,6 +1,7 @@
 import { HeadlessBridge } from './headless-bridge.js';
 import { EditorBridge } from './editor-bridge.js';
 import { RuntimeBridge } from './runtime-bridge.js';
+import { TransportRetry } from '../utils/retry.js';
 
 export interface TransportOperation {
   operation: string;
@@ -105,52 +106,59 @@ export class Transport {
     // Convert operation to appropriate format for each bridge
     const formattedOperation = this.formatOperation(operation);
     
-    switch (this.mode) {
-      case TransportMode.HEADLESS:
-        if (this.headlessBridge) {
-          return this.headlessBridge.execute(formattedOperation);
-        }
-        break;
-      
-      case TransportMode.EDITOR:
-        if (this.editorBridge) {
-          const result = await this.editorBridge.execute({
-            operation: formattedOperation.operation,
-            params: formattedOperation.params
-          });
-          return {
-            success: result.success,
-            data: result.data,
-            error: result.error
-          };
-        }
-        break;
-      
-      case TransportMode.RUNTIME:
-        if (this.runtimeBridge) {
-          try {
-            const result = await this.runtimeBridge.call(
-              formattedOperation.operation,
-              formattedOperation.params
-            );
-            return {
-              success: true,
-              data: result
-            };
-          } catch (error) {
-            return {
-              success: false,
-              error: error instanceof Error ? error.message : String(error)
-            };
+    try {
+      return await TransportRetry.executeTransportOperation(
+        async () => {
+          switch (this.mode) {
+            case TransportMode.HEADLESS:
+              if (this.headlessBridge) {
+                return this.headlessBridge.execute(formattedOperation);
+              }
+              throw new Error('Headless bridge not available');
+            
+            case TransportMode.EDITOR:
+              if (this.editorBridge) {
+                const result = await this.editorBridge.execute({
+                  operation: formattedOperation.operation,
+                  params: formattedOperation.params
+                });
+                return {
+                  success: result.success,
+                  data: result.data,
+                  error: result.error
+                };
+              }
+              throw new Error('Editor bridge not available');
+            
+            case TransportMode.RUNTIME:
+              if (this.runtimeBridge) {
+                const result = await this.runtimeBridge.call(
+                  formattedOperation.operation,
+                  formattedOperation.params
+                );
+                return {
+                  success: true,
+                  data: result
+                };
+              }
+              throw new Error('Runtime bridge not available');
+            
+            default:
+              throw new Error(`Unknown transport mode: ${this.mode}`);
           }
+        },
+        operation.operation,
+        {
+          maxAttempts: this.mode === TransportMode.HEADLESS ? 3 : 2,
+          initialDelay: this.mode === TransportMode.HEADLESS ? 500 : 1000
         }
-        break;
+      );
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
     }
-    
-    return {
-      success: false,
-      error: `No bridge available for mode: ${this.mode}`
-    };
   }
 
   private formatOperation(operation: TransportOperation): any {

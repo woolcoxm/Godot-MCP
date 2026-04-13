@@ -53,6 +53,7 @@ export function createSceneTreeTool(transport: Transport): RegisteredTool {
         root: tree,
         totalNodes: countNodes(tree),
         maxDepth: args.maxDepth,
+            destructiveHint: false,
       };
     },
     readOnlyHint: true,

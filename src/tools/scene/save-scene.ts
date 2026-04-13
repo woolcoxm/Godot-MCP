@@ -55,6 +55,7 @@ export function createSaveSceneTool(transport: Transport): RegisteredTool {
         path: args.path,
         bytesWritten: result.data?.bytes_written || content.length,
         message: `Scene saved successfully to ${args.path}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

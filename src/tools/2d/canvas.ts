@@ -97,6 +97,7 @@ export function createCanvasTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }
 

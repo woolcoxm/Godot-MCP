@@ -72,6 +72,7 @@ export function createMeshInstanceTool(transport: Transport): RegisteredTool {
         lod: args.lod,
         properties: meshConfig.properties,
         message: `Created MeshInstance3D "${args.name}" with ${args.meshType} mesh at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

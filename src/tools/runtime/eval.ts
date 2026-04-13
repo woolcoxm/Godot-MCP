@@ -18,7 +18,10 @@ export function createEvalTool(transport: Transport): RegisteredTool {
     inputSchema: evalSchema,
     handler: async (args: any) => {
       return handleEval(args, transport);
-    }
+    },
+    readOnlyHint: false,
+    destructiveHint: true,
+idempotentHint: false
   };
 }
 

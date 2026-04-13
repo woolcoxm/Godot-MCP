@@ -49,6 +49,23 @@ import { createSimulateInputTool } from './runtime/input-simulation.js';
 import { createScreenshotTool } from './runtime/screenshot.js';
 import { createDebugInfoTool } from './runtime/debug.js';
 import { createGameStateTool } from './runtime/state.js';
+import { createControlTool } from './ui/controls.js';
+import { createThemeTool, createApplyThemeTool } from './ui/theme.js';
+import { createLayoutTool, createArrangeTool } from './ui/layout.js';
+import { createPopupTool } from './ui/popup.js';
+import { createTreeItemListTool } from './ui/tree-itemlist.js';
+import { createTabMenuTool } from './ui/tab-menu.js';
+import { createTextRangeTool } from './ui/text-range.js';
+import { createGraphCustomTool } from './ui/graph-custom.js';
+import { createAudioPlayerTool, createAudioBusTool } from './audio/playback.js';
+import { createAudioEffectTool } from './audio/effects.js';
+import { createSpatialStreamTool } from './audio/spatial-stream.js';
+import { createHttpRequestTool, createWebSocketTool } from './networking/http.js';
+import { createMultiplayerTool } from './networking/multiplayer.js';
+import { createRPCPacketTool } from './networking/rpc-packet.js';
+import { createExportPresetTool, createBuildProjectTool } from './build/export.js';
+import { createScriptResourceTool, createSceneResourceTool, createProjectResourceTool } from './resources/mcp-resources.js';
+import { createDocsResourceTool } from './resources/docs-resource.js';
 
 export function registerAllTools(registry: ToolRegistry, transport: Transport): void {
   // Project tools
@@ -119,4 +136,38 @@ export function registerAllTools(registry: ToolRegistry, transport: Transport): 
   registry.registerTool(createScreenshotTool(transport));
   registry.registerTool(createDebugInfoTool(transport));
   registry.registerTool(createGameStateTool(transport));
+  
+  // UI tools
+  registry.registerTool(createControlTool(transport));
+  registry.registerTool(createThemeTool(transport));
+  registry.registerTool(createApplyThemeTool(transport));
+  registry.registerTool(createLayoutTool(transport));
+  registry.registerTool(createArrangeTool(transport));
+  registry.registerTool(createPopupTool(transport));
+  registry.registerTool(createTreeItemListTool(transport));
+  registry.registerTool(createTabMenuTool(transport));
+  registry.registerTool(createTextRangeTool(transport));
+  registry.registerTool(createGraphCustomTool(transport));
+  
+  // Audio tools
+  registry.registerTool(createAudioPlayerTool(transport));
+  registry.registerTool(createAudioBusTool(transport));
+  registry.registerTool(createAudioEffectTool(transport));
+  registry.registerTool(createSpatialStreamTool(transport));
+  
+  // Networking tools
+  registry.registerTool(createHttpRequestTool(transport));
+  registry.registerTool(createWebSocketTool(transport));
+  registry.registerTool(createMultiplayerTool(transport));
+  registry.registerTool(createRPCPacketTool(transport));
+  
+  // Build tools
+  registry.registerTool(createExportPresetTool(transport));
+  registry.registerTool(createBuildProjectTool(transport));
+  
+  // Resource tools
+  registry.registerTool(createScriptResourceTool(transport));
+  registry.registerTool(createSceneResourceTool(transport));
+  registry.registerTool(createProjectResourceTool(transport));
+  registry.registerTool(createDocsResourceTool(transport));
 }

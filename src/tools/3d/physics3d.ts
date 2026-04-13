@@ -122,6 +122,7 @@ export function createPhysics3DTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }
 

@@ -86,6 +86,7 @@ export function createParticles3DTool(transport: Transport): RegisteredTool {
         properties: particlesConfig.properties,
         transform: args.transform,
         message: `Created ${args.particleType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

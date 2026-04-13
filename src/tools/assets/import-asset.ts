@@ -64,6 +64,7 @@ export function createImportAssetTool(transport: Transport): RegisteredTool {
         assetType: args.assetType,
         importSettings: args.importSettings || {},
         message: `Asset imported to ${args.targetPath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: false,

@@ -104,6 +104,7 @@ export function createModifySceneTool(transport: Transport): RegisteredTool {
         path: args.path,
         appliedModifications,
         message: `Scene modified successfully with ${appliedModifications.length} changes`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

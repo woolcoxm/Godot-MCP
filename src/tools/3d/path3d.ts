@@ -82,6 +82,7 @@ export function createPath3DTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }
 

@@ -86,6 +86,7 @@ export function createGridmapTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }
 

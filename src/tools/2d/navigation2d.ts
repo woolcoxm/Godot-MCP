@@ -90,6 +90,7 @@ export function createNavigation2DTool(transport: Transport): RegisteredTool {
         properties: navigationConfig.properties,
         transform: args.transform,
         message: `Created ${args.navigationType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "godot-mcp": {
+      "command": "node",
+      "args": [
+        "dist/index.js"
+      ],
+      "env": {
+        "GODOT_PATH": "C:/Program Files/Godot/Godot_v4.3.exe",
+        "GODOT_MCP_LOG_LEVEL": "info",
+        "GODOT_MCP_EDITOR_PORT": "13337",
+        "GODOT_MCP_RUNTIME_PORT": "13338"
+      },
+      "cwd": "."
+    }
+  }
+}

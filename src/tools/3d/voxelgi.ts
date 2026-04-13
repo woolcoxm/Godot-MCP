@@ -77,6 +77,7 @@ export function createVoxelGITool(transport: Transport): RegisteredTool {
         properties: giConfig.properties,
         transform: args.transform,
         message: `Created ${args.giType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

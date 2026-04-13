@@ -16,7 +16,10 @@ export function createScreenshotTool(transport: Transport): RegisteredTool {
     inputSchema: screenshotSchema,
     handler: async (args: any) => {
       return handleScreenshot(args, transport);
-    }
+    },
+    readOnlyHint: false,
+    destructiveHint: true,
+idempotentHint: false
   };
 }
 

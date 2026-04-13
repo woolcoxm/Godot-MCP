@@ -88,6 +88,7 @@ export function createAnimationPlayerTool(transport: Transport): RegisteredTool 
         properties: animationConfig.properties,
         transform: args.transform,
         message: `Created AnimationPlayer "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

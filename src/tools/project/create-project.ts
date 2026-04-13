@@ -34,5 +34,6 @@ export function createCreateProjectTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: false,
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }

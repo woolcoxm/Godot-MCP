@@ -99,6 +99,7 @@ export function createAnimationTreeTool(transport: Transport): RegisteredTool {
         properties: treeConfig.properties,
         transform: args.transform,
         message: `Created AnimationTree "${args.name}" with ${args.treeType} at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

@@ -79,6 +79,7 @@ export function createModifyNodeTool(transport: Transport): RegisteredTool {
           renamed: args.renameTo ? 1 : 0,
         },
         message: `Node ${args.nodePath} modified in ${args.scenePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

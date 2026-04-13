@@ -66,6 +66,7 @@ export function createDeleteNodeTool(transport: Transport): RegisteredTool {
         nodePath: args.nodePath,
         recursive: args.recursive,
         message: `Node ${args.nodePath} deleted from ${args.scenePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

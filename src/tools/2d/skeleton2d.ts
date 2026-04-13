@@ -83,6 +83,7 @@ export function createSkeleton2DTool(transport: Transport): RegisteredTool {
         properties: skeletonConfig.properties,
         transform: args.transform,
         message: `Created Skeleton2D "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

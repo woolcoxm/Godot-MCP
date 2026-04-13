@@ -94,6 +94,7 @@ export function createModifyScriptTool(transport: Transport): RegisteredTool {
         modifications: appliedModifications,
         backupCreated: args.backup,
         message: `Script ${args.path} modified with ${appliedModifications.length} changes`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

@@ -90,6 +90,7 @@ export function createCreateScriptTool(transport: Transport): RegisteredTool {
         constants: args.constants?.length || 0,
         enums: args.enums?.length || 0,
         message: `Script created successfully at ${args.path}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: false,

@@ -59,5 +59,6 @@ export function createReadScriptTool(transport: Transport): RegisteredTool {
     },
     readOnlyHint: true,
     idempotentHint: true,
+        destructiveHint: false,
   };
 }

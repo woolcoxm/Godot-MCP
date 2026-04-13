@@ -71,6 +71,7 @@ export function createReflectionProbeTool(transport: Transport): RegisteredTool 
         properties: probeConfig.properties,
         transform: args.transform,
         message: `Created ReflectionProbe "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

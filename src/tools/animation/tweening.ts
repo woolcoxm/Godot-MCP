@@ -83,6 +83,7 @@ export function createTweeningTool(transport: Transport): RegisteredTool {
         properties: tweenConfig.properties,
         transform: args.transform,
         message: `Created Tween "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

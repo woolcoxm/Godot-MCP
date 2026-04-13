@@ -87,6 +87,7 @@ export function createLight2DTool(transport: Transport): RegisteredTool {
         properties: lightConfig.properties,
         transform: args.transform,
         message: `Created ${args.lightType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

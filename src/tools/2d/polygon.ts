@@ -80,6 +80,7 @@ export function createPolygonTool(transport: Transport): RegisteredTool {
         properties: polygonConfig.properties,
         transform: args.transform,
         message: `Created ${args.polygonType} "${args.name}" at ${nodePath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

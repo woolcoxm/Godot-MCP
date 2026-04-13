@@ -1,0 +1,12 @@
+{
+  "godot-mcp": {
+    "command": "node",
+    "args": [
+      "dist/index.js"
+    ],
+    "env": {
+      "GODOT_PATH": "/usr/bin/godot",
+      "GODOT_MCP_LOG_LEVEL": "info"
+    }
+  }
+}

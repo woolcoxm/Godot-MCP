@@ -91,6 +91,7 @@ export function createTilesetEditorTool(_transport: Transport): RegisteredTool {
         name: args.name,
         properties: tilesetConfig.properties,
         message: `Created TileSet "${args.name}" at ${args.tilesetPath}`,
+            readOnlyHint: false,
       };
     },
     destructiveHint: true,

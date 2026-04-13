@@ -17,7 +17,10 @@ export function createGameStateTool(transport: Transport): RegisteredTool {
     inputSchema: gameStateSchema,
     handler: async (args: any) => {
       return handleGameState(args, transport);
-    }
+    },
+    readOnlyHint: false,
+    destructiveHint: true,
+idempotentHint: false
   };
 }
 

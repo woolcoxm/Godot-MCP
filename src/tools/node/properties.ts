@@ -108,5 +108,6 @@ export function createNodePropertiesTool(transport: Transport): RegisteredTool {
     },
     destructiveHint: true, // Can be destructive when setting properties
     idempotentHint: false,
+        readOnlyHint: false,
   };
 }

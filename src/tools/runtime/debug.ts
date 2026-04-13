@@ -16,7 +16,10 @@ export function createDebugInfoTool(transport: Transport): RegisteredTool {
     inputSchema: debugInfoSchema,
     handler: async (args: any) => {
       return handleDebugInfo(args, transport);
-    }
+    },
+    readOnlyHint: true,
+    destructiveHint: false,
+idempotentHint: true
   };
 }
 

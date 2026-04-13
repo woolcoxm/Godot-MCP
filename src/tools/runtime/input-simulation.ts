@@ -35,7 +35,10 @@ export function createSimulateInputTool(transport: Transport): RegisteredTool {
     inputSchema: simulateInputSchema,
     handler: async (args: any) => {
       return handleSimulateInput(args, transport);
-    }
+    },
+    readOnlyHint: false,
+    destructiveHint: true,
+idempotentHint: false
   };
 }
 

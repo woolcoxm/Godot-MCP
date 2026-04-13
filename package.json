@@ -1,35 +1,65 @@
 {
   "name": "godot-mcp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "Model Context Protocol (MCP) server for Godot Engine with 149+ tools across 14 categories",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build && npm test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/woolcoxm/Godot-MCP.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "godot",
+    "game-development",
+    "model-context-protocol",
+    "ai",
+    "tool",
+    "gamedev",
+    "2d",
+    "3d",
+    "animation",
+    "ui",
+    "audio",
+    "networking"
+  ],
+  "author": "woolcoxm",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/woolcoxm/Godot-MCP/issues"
   },
   "homepage": "https://github.com/woolcoxm/Godot-MCP#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "godot_plugin",
+    "examples",
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "ws": "^8.20.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
     "@types/node": "^25.6.0",
     "@types/ws": "^8.18.1",
     "typescript": "^6.0.2",
-    "vitest": "^4.1.4",
-    "ws": "^8.20.0",
-    "zod": "^4.3.6"
+    "vitest": "^4.1.4"
   }
 }

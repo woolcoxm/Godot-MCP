@@ -23,6 +23,7 @@ export function createReadSceneTool(transport: Transport): RegisteredTool {
       groups: node.groups,
       script: node.script,
       metadata: node.metadata,
+          destructiveHint: false,
     };
   }
 
