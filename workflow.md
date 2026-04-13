@@ -36,27 +36,27 @@
 - [x] **27. Node ops: `modify-node.ts`** — Modify node properties, metadata
 - [x] **28. Node ops: `delete-node.ts`** — Remove node and children from scene
 - [x] **29. Node ops: `properties.ts`** — Get/set individual properties with type validation
-- [ ] **30. Node ops: `signals.ts`** — Add/remove connections between nodes
-- [ ] **31. Node ops: `groups.ts`** — Add/remove nodes to/from groups
-- [ ] **32. Additional node ops** — Reparent, find, children, move order, duplicate
+- [x] **30. Node ops: `signals.ts`** — Add/remove connections between nodes
+- [x] **31. Node ops: `groups.ts`** — Add/remove nodes to/from groups
+- [x] **32. Additional node ops** — Reparent, find, children, move order, duplicate
 - [x] **33. GDScript tools: `create-script.ts`** — Create `.gd` files with class_name, extends, boilerplate
 - [x] **34. GDScript tools: `read-script.ts`** — Parse `.gd` into structured representation (functions, variables, signals, exports)
 - [x] **35. GDScript tools: `modify-script.ts`** — Add/remove functions, variables, signals, annotations
-- [ ] **36. GDScript tools: `analyze-script.ts`** — Static analysis (unused vars, missing _ready, signal connections)
-- [ ] **37. GDScript tools: `attach-script.ts`** — Attach/detach scripts from nodes
+- [x] **36. GDScript tools: `analyze-script.ts`** — Static analysis (unused vars, missing _ready, signal connections)
+- [x] **37. GDScript tools: `attach-script.ts`** — Attach/detach scripts from nodes
 - [x] **38. Asset pipeline: `import-asset.ts`** — Copy assets into project, configure `.import`
-- [ ] **39. Asset pipeline: `create-material.ts`** — Generate `.tres` material files (StandardMaterial3D, ShaderMaterial)
-- [ ] **40. Asset pipeline: `create-shader.ts`** — Generate `.gdshader` files with shader params
-- [ ] **41. Asset pipeline: `create-texture.ts`** — Placeholder texture generation (GradientTexture, NoiseTexture, etc.)
-- [ ] **42. Asset pipeline: `procedural-mesh.ts`** — Generate mesh resources (ArrayMesh, QuadMesh, etc.)
-- [ ] **43. Implement remaining project tools** — Input map, autoloads, plugins, translations
-- [ ] **44. Scene parser: full `.tscn` serialization** — Handle [ext_resource], [sub_resource], [node] sections, connections
-- [ ] **45. Scene parser: `.tres` resource files** — Parse/serialize resource files
-- [ ] **46. Transaction-like scene batching** — Accumulate node changes, apply atomically
-- [ ] **47. Idempotency checks** — Duplicate name detection, existing resource checks
-- [ ] **48. Error handling** — Descriptive error codes, recovery suggestions
+- [x] **39. Asset pipeline: `create-material.ts`** — Generate `.tres` material files (StandardMaterial3D, ShaderMaterial)
+- [x] **40. Asset pipeline: `create-shader.ts`** — Generate `.gdshader` files with shader params
+- [x] **41. Asset pipeline: `create-texture.ts`** — Placeholder texture generation (GradientTexture, NoiseTexture, etc.)
+- [x] **42. Asset pipeline: `procedural-mesh.ts`** — Generate mesh resources (ArrayMesh, QuadMesh, etc.)
+- [x] **43. Implement remaining project tools** — Input map, autoloads, plugins, translations
+- [x] **44. Scene parser: full `.tscn` serialization** — Handle [ext_resource], [sub_resource], [node] sections, connections
+- [x] **45. Scene parser: `.tres` resource files** — Parse/serialize resource files
+- [x] **46. Transaction-like scene batching** — Accumulate node changes, apply atomically
+- [x] **47. Idempotency checks** — Duplicate name detection, existing resource checks
+- [x] **48. Error handling** — Descriptive error codes, recovery suggestions
 - [x] **49. Write Phase 2 tests** — Scene CRUD, node ops, script tools, asset pipeline, scene parser
-- [ ] **50. Integration test** — Full flow: create project → create scene → add nodes → attach scripts → save
+- [x] **50. Integration test** — Full flow: create project → create scene → add nodes → attach scripts → save
 
 ---
 
@@ -183,12 +183,12 @@
 
 **Progress Tracking:**
 - Phase 1: 20/20 (100%) ✅ COMPLETED
-- Phase 2: 28/30 (93%) ✅ CORE COMPLETED
-- Phase 3: 31/35 (89%) ✅ CORE COMPLETED
-- Phase 4: 19/25 (76%) ✅ CORE COMPLETED
+- Phase 2: 30/30 (100%) ✅ COMPLETED
+- Phase 3: 35/35 (100%) ✅ COMPLETED
+- Phase 4: 25/25 (100%) ✅ COMPLETED
 - Phase 5: 25/25 (100%) ✅ COMPLETED
 - Phase 6: 15/15 (100%) ✅ COMPLETED
-- **Overall: 138/149 (93%)**
+- **Overall: 150/150 (100%)**
 
 **Notes:**
 - Checkboxes are placed beside each task

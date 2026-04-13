@@ -226,7 +226,12 @@ export class SceneParser {
       const parentNode = nodes.get(parentPath);
       
       if (parentNode) {
-        parentNode.children.push(node.path);
+        // Initialize children array if not present
+        if (!parentNode.children) {
+          parentNode.children = [];
+        }
+        // Add the actual node object, not just the path
+        parentNode.children.push(node);
       } else {
         logger.warn(`Parent node not found: ${parentPath} for child: ${nodePath}`);
       }
@@ -427,8 +432,13 @@ export class SceneParser {
   static serializeScene(sceneInfo: SceneInfo): string {
     const lines: string[] = [];
     
+    // Calculate total load steps (ext_resources + sub_resources)
+    const extResourceCount = sceneInfo.resources?.length || 0;
+    const subResourceCount = sceneInfo.sub_resources?.length || 0;
+    const totalLoadSteps = extResourceCount + subResourceCount;
+    
     // Write header
-    lines.push(`[gd_scene load_steps=${sceneInfo.resources?.length || 0} format=3 uid="${sceneInfo.uid || ''}"]`);
+    lines.push(`[gd_scene load_steps=${totalLoadSteps} format=3${sceneInfo.uid ? ` uid="${sceneInfo.uid}"` : ''}]`);
     lines.push('');
     
     // Write external resources
@@ -439,39 +449,37 @@ export class SceneParser {
       lines.push('');
     }
     
-      // Write sub-resources
-      if (sceneInfo.sub_resources && sceneInfo.sub_resources.length > 0) {
-        for (const subResource of sceneInfo.sub_resources) {
+    // Write sub-resources
+    if (sceneInfo.sub_resources && sceneInfo.sub_resources.length > 0) {
+      for (const subResource of sceneInfo.sub_resources) {
         lines.push(`[sub_resource type="${subResource.type}" id="${subResource.id}"]`);
         for (const [key, value] of Object.entries(subResource.properties)) {
-          lines.push(`${key} = ${this.serializeValue(value)}`);
+          if (value !== undefined && value !== null) {
+            lines.push(`${key} = ${this.serializeValue(value)}`);
+          }
         }
         lines.push('');
       }
     }
     
-    // Write nodes (BFS traversal)
-    const nodeQueue: { node: NodeInfo; path: string }[] = [
-      { node: sceneInfo.root, path: sceneInfo.root.name }
-    ];
-    
-    while (nodeQueue.length > 0) {
-      const { node, path } = nodeQueue.shift()!;
-      
+    // Write nodes using recursive traversal
+    const writeNode = (node: NodeInfo, parentPath: string = '.', depth: number = 0) => {
       // Write node header
-      const parent = path === node.name ? '.' : this.getParentPath(path);
-      lines.push(`[node name="${node.name}" type="${node.type}" parent="${parent}"]`);
+      lines.push(`[node name="${node.name}" type="${node.type}" parent="${parentPath}"]`);
       
       // Write node properties
-      for (const [key, value] of Object.entries(node.properties)) {
-        if (value !== undefined && value !== null) {
-          lines.push(`${key} = ${this.serializeValue(value)}`);
+      if (node.properties) {
+        for (const [key, value] of Object.entries(node.properties)) {
+          if (value !== undefined && value !== null) {
+            lines.push(`${key} = ${this.serializeValue(value)}`);
+          }
         }
       }
       
       // Write script if present
       if (node.script) {
-        lines.push(`script = ExtResource("${node.script}")`);
+        const scriptValue = typeof node.script === 'string' ? node.script : node.script.path;
+        lines.push(`script = ExtResource("${scriptValue}")`);
       }
       
       // Write groups if present
@@ -484,24 +492,49 @@ export class SceneParser {
         lines.push(`metadata = ${this.serializeDictionary(node.metadata)}`);
       }
       
+      // Write instance if present (for instanced scenes)
+      if (node.instance) {
+        lines.push(`instance = ExtResource("${node.instance}")`);
+      }
+      
+      // Write instance_placeholder if present
+      if (node.instance_placeholder) {
+        lines.push(`instance_placeholder = "${node.instance_placeholder}"`);
+      }
+      
       lines.push('');
       
-      // Add children to queue
-      for (const _childPath of node.children) {
-        // In a real implementation, we'd need to look up the child node
-        // For now, we'll just note that children need to be written
+      // Recursively write children
+      if (node.children && node.children.length > 0) {
+        const currentPath = parentPath === '.' ? node.name : `${parentPath}/${node.name}`;
+        for (const child of node.children) {
+          writeNode(child, currentPath, depth + 1);
+        }
       }
-    }
+    };
+    
+    // Start writing from root
+    writeNode(sceneInfo.root);
     
     // Write connections
     if (sceneInfo.connections && sceneInfo.connections.length > 0) {
       for (const connection of sceneInfo.connections) {
-        lines.push(`[connection signal="${connection.signal}" from="${connection.from.path}" to="${connection.to.path}" method="${connection.method}" flags=${connection.flags}]`);
+        const fromPath = typeof connection.from === 'string' ? connection.from : connection.from.path;
+        const toPath = typeof connection.to === 'string' ? connection.to : connection.to.path;
+        lines.push(`[connection signal="${connection.signal}" from="${fromPath}" to="${toPath}" method="${connection.method}"${connection.flags !== undefined ? ` flags=${connection.flags}` : ''}]`);
         if (connection.binds && connection.binds.length > 0) {
           lines.push(`binds = ${this.serializeArray(connection.binds)}`);
         }
         lines.push('');
       }
+    }
+    
+    // Write editable instances if present
+    if (sceneInfo.editable_instances && sceneInfo.editable_instances.length > 0) {
+      for (const instance of sceneInfo.editable_instances) {
+        lines.push(`[editable path="${instance}"]`);
+      }
+      lines.push('');
     }
     
     return lines.join('\n');
@@ -566,5 +599,61 @@ export class SceneParser {
       `"${key}": ${this.serializeValue(value)}`
     );
     return `{${items.join(', ')}}`;
+  }
+
+  static findNodeByPath(sceneInfo: SceneInfo, nodePath: string): NodeInfo | null {
+    if (!nodePath || nodePath === '.') {
+      return sceneInfo.root;
+    }
+
+    const pathParts = nodePath.split('/').filter(part => part !== '');
+    
+    let currentNode = sceneInfo.root;
+    for (const part of pathParts) {
+      const child = currentNode.children?.find(child => child.name === part);
+      if (!child) {
+        return null;
+      }
+      currentNode = child;
+    }
+    
+    return currentNode;
+  }
+
+  static findNodeByPathRecursive(node: NodeInfo, pathParts: string[], currentIndex: number = 0): NodeInfo | null {
+    if (currentIndex >= pathParts.length) {
+      return node;
+    }
+
+    const targetName = pathParts[currentIndex];
+    
+    // Check if current node matches
+    if (node.name === targetName) {
+      if (currentIndex === pathParts.length - 1) {
+        return node;
+      }
+      
+      // Continue searching in children
+      if (node.children) {
+        for (const child of node.children) {
+          const result = this.findNodeByPathRecursive(child, pathParts, currentIndex + 1);
+          if (result) {
+            return result;
+          }
+        }
+      }
+    }
+    
+    // Check children for the first path part
+    if (currentIndex === 0 && node.children) {
+      for (const child of node.children) {
+        const result = this.findNodeByPathRecursive(child, pathParts, currentIndex);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    
+    return null;
   }
 }

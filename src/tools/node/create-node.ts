@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport, TransportOperation } from '../../transports/transport.js';
 import { SceneParser } from '../../utils/scene-parser.js';
+import { IdempotencyChecker } from '../../utils/idempotency.js';
+import { NodeInfo } from '../../types/godot.js';
 
 const createNodeSchema = z.object({
   scenePath: z.string().describe('Path to the scene file (e.g., "res://scenes/main.tscn")'),
@@ -12,6 +14,7 @@ const createNodeSchema = z.object({
   script: z.string().optional().describe('Script to attach to the node (resource path)'),
   groups: z.array(z.string()).optional().describe('Groups to add the node to'),
   metadata: z.record(z.string(), z.any()).optional().describe('Metadata to attach to the node'),
+  checkExisting: z.boolean().default(true).describe('Check if node already exists before creating'),
 });
 
 export function createCreateNodeTool(transport: Transport): RegisteredTool {
@@ -22,6 +25,44 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
     category: 'node',
     inputSchema: createNodeSchema,
     handler: async (args) => {
+      // Create new node path
+      const newNodePath = args.parentPath === '.' ? args.nodeName : `${args.parentPath}/${args.nodeName}`;
+      
+      // Check if node already exists (idempotency check)
+      if (args.checkExisting) {
+        const { exists, node } = await IdempotencyChecker.checkNodeExists(
+          transport,
+          args.scenePath,
+          newNodePath
+        );
+        
+        if (exists && node) {
+          // Check if existing node matches requested properties
+          const propertiesMatch = !args.properties || Object.entries(args.properties).every(
+            ([key, value]) => node.properties[key] === value
+          );
+          
+          const scriptMatch = !args.script || node.script?.path === args.script;
+          
+          const groupsMatch = !args.groups || (
+            node.groups && 
+            args.groups.every(group => node.groups!.includes(group))
+          );
+          
+          if (propertiesMatch && scriptMatch && groupsMatch) {
+            return {
+              scenePath: args.scenePath,
+              nodePath: newNodePath,
+              nodeType: node.type,
+              nodeName: args.nodeName,
+              alreadyExists: true,
+              message: `Node ${args.nodeName} already exists at ${newNodePath} with matching properties`,
+              readOnlyHint: false,
+            };
+          }
+        }
+      }
+      
       // Read the scene first
       const readOperation: TransportOperation = {
         operation: 'read_scene',
@@ -41,27 +82,44 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
       // Parse the scene
       const sceneInfo = SceneParser.parseScene(readResult.data.content);
       
-      // Create new node path
-      const newNodePath = args.parentPath === '.' ? args.nodeName : `${args.parentPath}/${args.nodeName}`;
+      // Check if parent exists
+      let parentNode: NodeInfo;
+      if (args.parentPath === '.') {
+        parentNode = sceneInfo.root;
+      } else {
+        const foundParent = SceneParser.findNodeByPath(sceneInfo, args.parentPath);
+        if (!foundParent) {
+          throw new Error(`Parent node not found: ${args.parentPath}`);
+        }
+        parentNode = foundParent;
+      }
       
-      // Create new node object (placeholder for actual implementation)
-      // const newNode = {
-      //   name: args.nodeName,
-      //   type: args.nodeType,
-      //   path: { path: newNodePath },
-      //   parent: args.parentPath === '.' ? undefined : { path: args.parentPath },
-      //   children: [],
-      //   properties: args.properties || {},
-      //   groups: args.groups || [],
-      //   script: args.script,
-      //   metadata: args.metadata || {},
-      // };
-
-      // In a real implementation, we would:
-      // 1. Add the node to the scene structure
-      // 2. Update parent's children array
-      // 3. Serialize back to .tscn
-      // For now, we'll simulate the operation
+      // Check if node with same name already exists in parent
+      if (parentNode.children?.some(child => child.name === args.nodeName)) {
+        throw new Error(`Node with name "${args.nodeName}" already exists in parent ${args.parentPath}`);
+      }
+      
+      // Create new node
+      const newNode: NodeInfo = {
+        name: args.nodeName,
+        type: args.nodeType,
+        path: { path: newNodePath },
+        parent: { path: args.parentPath },
+        children: [],
+        properties: args.properties || {},
+        groups: args.groups || [],
+        metadata: args.metadata || {},
+      };
+      
+      if (args.script) {
+        newNode.script = { path: args.script };
+      }
+      
+      // Add to parent's children
+      if (!parentNode.children) {
+        parentNode.children = [];
+      }
+      parentNode.children.push(newNode);
       
       // Serialize updated scene
       const updatedContent = SceneParser.serializeScene(sceneInfo);
@@ -86,11 +144,12 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
         nodePath: newNodePath,
         nodeType: args.nodeType,
         nodeName: args.nodeName,
+        created: true,
         message: `Node ${args.nodeName} created at ${newNodePath} in ${args.scenePath}`,
-            readOnlyHint: false,
+        readOnlyHint: false,
       };
     },
     destructiveHint: true,
-    idempotentHint: false,
+    idempotentHint: true,
   };
 }
