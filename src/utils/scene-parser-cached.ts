@@ -27,32 +27,41 @@ export class CachedSceneParser {
   }
 
   static parseSceneFromPath(path: string, content: string): SceneInfo {
-    const cacheKey = sceneCache.getSceneKey(path, true, true);
-    return this.parseScene(content, cacheKey);
+    const cacheKey = `scene:path:${path}`;
+    
+    // Check cache
+    const cached = sceneCache.get(cacheKey);
+    if (cached) {
+      logger.debug(`Scene cache hit (path): ${path}`);
+      return cached;
+    }
+    
+    logger.debug(`Scene cache miss (path): ${path}`);
+    
+    // Parse scene
+    const sceneInfo = SceneParser.parseScene(content);
+    
+    // Cache the result
+    sceneCache.set(cacheKey, sceneInfo);
+    
+    return sceneInfo;
+  }
+
+  static getCachedScene(path: string): SceneInfo | null {
+    const cacheKey = `scene:path:${path}`;
+    return sceneCache.get(cacheKey) || null;
   }
 
   static invalidateScene(path: string): void {
-    // Invalidate all variations of this scene in cache
-    const keys = sceneCache.getKeys();
-    const prefix = `scene:${path}:`;
-    
-    for (const key of keys) {
-      if (key.startsWith(prefix)) {
-        sceneCache.delete(key);
-        logger.debug(`Invalidated scene cache: ${key}`);
-      }
-    }
+    const cacheKey = `scene:path:${path}`;
+    sceneCache.delete(cacheKey);
+    logger.debug(`Invalidated scene cache: ${path}`);
   }
 
-  static getSceneFromCache(path: string, includeNodes: boolean = true, includeResources: boolean = true): SceneInfo | null {
-    const key = sceneCache.getSceneKey(path, includeNodes, includeResources);
-    return sceneCache.get(key);
-  }
-
-  static updateSceneInCache(path: string, sceneInfo: SceneInfo): void {
-    const key = sceneCache.getSceneKey(path, true, true);
-    sceneCache.set(key, sceneInfo);
-    logger.debug(`Updated scene in cache: ${path}`);
+  static invalidateAll(): void {
+    // Note: We can't iterate over all keys with the current Cache implementation
+    // This would require adding a getKeys() method to the Cache class
+    logger.debug('Scene cache invalidation not fully implemented (needs getKeys method)');
   }
 }
 

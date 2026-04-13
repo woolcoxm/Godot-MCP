@@ -1,4 +1,5 @@
-import { ChildProcess } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
+import * as path from 'path';
 import { config } from '../config.js';
 import { logger } from '../utils/logger.js';
 import { connectionPool } from '../utils/connection-pool.js';
@@ -23,9 +24,22 @@ export class HeadlessBridge {
 
   async execute(operation: HeadlessOperation): Promise<HeadlessResult> {
     try {
-      return await connectionPool.executeWithProcess(async (process: ChildProcess) => {
-        return this.executeWithProcess(process, operation);
-      });
+      // Use connection pool to manage Godot processes
+      const { connection: process, release } = await connectionPool.acquire(
+        'godot_process',
+        async () => {
+          return this.spawnGodotProcess();
+        }
+      );
+      
+      try {
+        const result = await this.executeWithProcess(process as ChildProcess, operation);
+        release();
+        return result;
+      } catch (error) {
+        release();
+        throw error;
+      }
     } catch (error) {
       logger.error('Headless bridge execution error:', error);
       return {
@@ -33,6 +47,28 @@ export class HeadlessBridge {
         error: error instanceof Error ? error.message : String(error)
       };
     }
+  }
+
+  private spawnGodotProcess(): ChildProcess {
+    const godotPath = config.godotPath;
+    const scriptPath = path.join(__dirname, '../../godot/headless/godot_operations.gd');
+    
+    logger.debug(`Spawning Godot process: ${godotPath} --headless --script ${scriptPath}`);
+    
+    const process = spawn(godotPath, ['--headless', '--script', scriptPath], {
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    
+    // Set up basic error handling
+    process.on('error', (error) => {
+      logger.error(`Godot process error: ${error.message}`);
+    });
+    
+    process.on('close', (code) => {
+      logger.debug(`Godot process closed with code ${code}`);
+    });
+    
+    return process;
   }
 
   private executeWithProcess(process: ChildProcess, operation: HeadlessOperation): Promise<HeadlessResult> {

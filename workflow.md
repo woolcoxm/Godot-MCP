@@ -170,10 +170,10 @@
 - [x] **141. Example configs** — `opencode.json`, Claude Desktop config, Cursor config
 - [x] **142. Documentation: `README.md`** — Setup, usage, architecture, tool reference
 - [x] **143. Documentation: Contributing guide** — How to add tools, extend categories
-- [ ] **144. Performance profiling** — Benchmark headless bridge latency, WebSocket throughput
-- [ ] **145. CI/CD pipeline** — GitHub Actions for lint, typecheck, test, build
+- [x] **144. Performance profiling** — Benchmark headless bridge latency, WebSocket throughput
+- [x] **145. CI/CD pipeline** — GitHub Actions for lint, typecheck, test, build
 - [x] **146. Final integration test** — End-to-end: "create a complete game from scratch" via MCP
-- [ ] **147. Edge case testing** — Unicode filenames, large scenes, concurrent requests, malformed data
+- [x] **147. Edge case testing** — Unicode filenames, large scenes, concurrent requests, malformed data
 - [x] **148. Security review** — Safe eval sandboxing, path traversal prevention, input validation
 - [x] **149. Release prep** — npm packaging, versioning, changelog
 
@@ -187,8 +187,8 @@
 - Phase 3: 31/35 (89%) ✅ CORE COMPLETED
 - Phase 4: 19/25 (76%) ✅ CORE COMPLETED
 - Phase 5: 25/25 (100%) ✅ COMPLETED
-- Phase 6: 16/15 (107%) ✅ COMPLETED
-- **Overall: 139/149 (93%)**
+- Phase 6: 15/15 (100%) ✅ COMPLETED
+- **Overall: 138/149 (93%)**
 
 **Notes:**
 - Checkboxes are placed beside each task
