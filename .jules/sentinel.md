@@ -1,0 +1,4 @@
+## 2026-04-14 - Prevent Path Traversal in GDScript File Ops
+**Vulnerability:** Arbitrary file read/write via unvalidated paths in `script_ops.gd` (`read_script`, `write_script`). Input paths were passed directly to `FileAccess` allowing access outside the intended directories using traversal (`..`) or absolute paths.
+**Learning:** GDScript's `FileAccess` does not inherently block path traversal or restrict operations to specific Godot virtual file systems like `res://`. If the path is controllable by the user (or via MCP), it poses a critical risk to the host filesystem.
+**Prevention:** Always validate file paths before performing file operations. Introduce a validation function (e.g., `_is_path_safe`) to ensure paths start with the expected root (`res://`) and reject any path containing directory traversal sequences (`..`).
