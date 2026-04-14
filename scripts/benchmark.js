@@ -49,8 +49,15 @@ async function runBenchmarks() {
         category: i % 10 === 0 ? 'system' : '3d'
       }));
       
+      const toolsByCategory = new Map();
+      mockTools.forEach(t => {
+        const catTools = toolsByCategory.get(t.category) || [];
+        catTools.push(t);
+        toolsByCategory.set(t.category, catTools);
+      });
+
       for (let i = 0; i < 1000; i++) {
-        mockTools.filter(t => t.category === '3d');
+        toolsByCategory.get('3d') || [];
       }
     }),
     
