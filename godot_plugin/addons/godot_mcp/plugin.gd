@@ -3,6 +3,7 @@ extends EditorPlugin
 
 var mcp_server = null
 var server_port = 13337
+var status_dialog: AcceptDialog = null
 
 func _enter_tree():
 	print("[Godot MCP] Plugin loading...")
@@ -29,6 +30,11 @@ func _enter_tree():
 func _exit_tree():
 	print("[Godot MCP] Plugin unloading...")
 	
+	# Cleanup UI
+	if status_dialog:
+		status_dialog.queue_free()
+		status_dialog = null
+
 	# Remove menu items
 	remove_tool_menu_item("Godot MCP: Restart Server")
 	remove_tool_menu_item("Godot MCP: Stop Server")
@@ -66,4 +72,11 @@ func _show_status():
 		status += "  Server: Not initialized\n"
 	
 	print(status)
-	# In a real implementation, we would show this in a dialog
+
+	if not status_dialog:
+		status_dialog = AcceptDialog.new()
+		status_dialog.title = "Godot MCP Status"
+		get_editor_interface().get_base_control().add_child(status_dialog)
+
+	status_dialog.dialog_text = status
+	status_dialog.popup_centered()
