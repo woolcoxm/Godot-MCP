@@ -11,6 +11,11 @@ func read_script(script_path: String) -> Dictionary:
 		result["error"] = "Script path is empty"
 		return result
 	
+	# Security check: Prevent path traversal
+	if not _is_path_safe(script_path):
+		result["error"] = "Access denied: Invalid or unsafe path"
+		return result
+
 	# Try to load the script
 	var script = load(script_path)
 	if not script:
@@ -46,6 +51,11 @@ func write_script(script_path: String, content: String) -> Dictionary:
 		result["error"] = "Script path is empty"
 		return result
 	
+	# Security check: Prevent path traversal
+	if not _is_path_safe(script_path):
+		result["error"] = "Access denied: Invalid or unsafe path"
+		return result
+
 	# Check if we're in editor
 	var editor_interface = Engine.get_main_loop().get_meta("__editor_interface", null)
 	if not editor_interface:
@@ -97,6 +107,14 @@ func _write_script_file(script_path: String, content: String) -> void:
 		print("[Script Ops] Script written: ", script_path)
 	else:
 		print("[Script Ops] Failed to write script: ", script_path)
+
+func _is_path_safe(path: String) -> bool:
+	var simplified_path = path.simplify_path()
+	if not simplified_path.begins_with("res://"):
+		return false
+	if ".." in simplified_path:
+		return false
+	return true
 
 func _check_script_errors(script: Script) -> bool:
 	# Check if script has syntax errors
