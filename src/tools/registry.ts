@@ -18,6 +18,7 @@ export interface RegisteredTool {
 export class ToolRegistry {
   private server: McpServer;
   private tools: Map<string, RegisteredTool> = new Map();
+  private toolsByCategory: Map<string, RegisteredTool[]> = new Map();
 
   constructor(server: McpServer) {
     this.server = server;
@@ -56,8 +57,7 @@ export class ToolRegistry {
         pageSize: z.number().min(1).max(50).default(20).describe('Number of tools per page'),
       }),
       handler: async ({ category, page, pageSize }) => {
-        const categoryTools = Array.from(this.tools.values())
-          .filter(tool => tool.category === category);
+        const categoryTools = this.toolsByCategory.get(category) || [];
         
         const startIndex = (page - 1) * pageSize;
         const endIndex = startIndex + pageSize;
@@ -154,6 +154,14 @@ export class ToolRegistry {
     }
 
     this.tools.set(tool.id, tool);
+
+    let categoryTools = this.toolsByCategory.get(tool.category);
+    if (!categoryTools) {
+      categoryTools = [];
+      this.toolsByCategory.set(tool.category, categoryTools);
+    }
+    categoryTools.push(tool);
+
     this.registerWithServer(tool);
     logger.debug(`Registered tool: ${tool.id}`);
   }
@@ -208,8 +216,7 @@ export class ToolRegistry {
   }
 
   getToolsByCategory(categoryId: string, offset: number = 0, limit: number = Infinity): RegisteredTool[] {
-    const categoryTools = Array.from(this.tools.values())
-      .filter(tool => tool.category === categoryId);
+    const categoryTools = this.toolsByCategory.get(categoryId) || [];
     return categoryTools.slice(offset, offset + limit);
   }
 
@@ -218,11 +225,7 @@ export class ToolRegistry {
   }
 
   getCategories(): string[] {
-    const categories = new Set<string>();
-    for (const tool of this.tools.values()) {
-      categories.add(tool.category);
-    }
-    return Array.from(categories).sort();
+    return Array.from(this.toolsByCategory.keys()).sort();
   }
 
   searchTools(query: string, offset: number = 0, limit: number = 20): RegisteredTool[] {

@@ -1,0 +1,3 @@
+## 2024-05-15 - [O(1) Map Lookups for Read-Heavy Iterations]
+**Learning:** Found an architectural pattern in `src/tools/registry.ts` where category-based list/filter functions iterated over all tools with O(N) complexity for every category lookup. Since the tool list remains mostly static while being fetched repetitively through the server loop, we incur expensive array creations and loop filters.
+**Action:** Implemented a secondary map index (`toolsByCategory`) populated at tool registration time, replacing linear scans for categories with instantaneous O(1) map lookups, bypassing iteration filters significantly speeding up the most common operations like fetching grouped tooling.
