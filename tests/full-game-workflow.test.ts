@@ -34,10 +34,20 @@ class GameWorkflowTransport extends Transport {
     const params = operation.params || {};
     
     switch (op) {
+      case 'read_file':
+        if (params.path && params.path.endsWith('.gd')) {
+          return { success: true, data: { content: this.projectState.scripts[params.path]?.content || 'extends Node\nfunc sync_position():\n  pass\n' } };
+        }
+        return { success: true, data: { content: '[gd_scene load_steps=1 format=3]\n[node name="Root" type="Node2D"]' } };
+      case 'write_file':
+        if (params.path && params.path.endsWith('.gd')) {
+          this.projectState.scripts[params.path] = { path: params.path, content: params.content };
+        }
+        return { success: true, data: { message: 'saved' } };
       case 'create_project':
         this.projectState.name = params.name || 'TestGame';
         this.projectState.path = params.path || 'res://';
-        return { success: true, data: { path: this.projectState.path, message: 'Created project at ' + this.projectState.path } };
+        return { success: true, data: { path: this.projectState.path, message: 'Created project' } };
         
       case 'create_scene':
         const scenePath = params.path || `res://scenes/${params.name || 'Main'}.tscn`;
@@ -64,7 +74,7 @@ class GameWorkflowTransport extends Transport {
         return { success: false, error: 'Scene not found' };
         
       case 'create_script':
-        const scriptPath = params.path || `res://scripts/${params.name || 'Script'}.gd`;
+        const scriptPath = params.scriptPath || params.path || `res://scripts/${params.name || 'Script'}.gd`;
         this.projectState.scripts[scriptPath] = {
           path: scriptPath,
           className: params.className,
@@ -84,11 +94,10 @@ class GameWorkflowTransport extends Transport {
         }
         return { success: false, error: 'Script not found' };
         
-      case 'build_project':
+      case 'export_project':
         return {
           success: true, 
           data: { 
-            message: 'Exported project',
             exportPath: params.exportPath || 'build/game.exe',
             size: 1024 * 1024 * 50, // 50MB
             platform: params.platform || 'Windows Desktop'
@@ -158,8 +167,8 @@ describe('Full Game Creation Workflow', () => {
     const playerResult = await registry.executeTool('godot_create_node', {
       parentPath: '.',
       nodeType: 'CharacterBody2D',
-      nodeName: 'Player',
       scenePath: 'res://scenes/Main.tscn',
+      nodeName: 'Player',
       properties: {
         position: { x: 100, y: 300 },
         collision_shape: 'CapsuleShape2D'
@@ -169,7 +178,8 @@ describe('Full Game Creation Workflow', () => {
     expect(playerResult.content[0].text).toBeDefined();
     
     // Step 4: Create player sprite
-    const spriteResult = await registry.executeTool('godot_create_sprite2d', {
+    const spriteResult = await registry.executeTool('godot_create_node', {
+      nodeType: 'Sprite2D',
       scenePath: 'res://scenes/Main.tscn',
       parentPath: './Player',
       texturePath: 'res://assets/player.png',
@@ -178,7 +188,7 @@ describe('Full Game Creation Workflow', () => {
       centered: true
     });
     
-
+    expect(spriteResult.content[0].text).toBeDefined();
     
     // Step 5: Create player script
     const scriptResult = await registry.executeTool('godot_create_script', {
@@ -212,7 +222,7 @@ func _physics_process(delta):
   move_and_slide()`
     });
     
-    expect(scriptResult.content[0].text).toBeDefined();
+    expect(scriptResult.content[0].text).toContain('Script created successfully');
     
     // Step 6: Create UI controls
     const uiResult = await registry.executeTool('godot_create_control', {
@@ -263,7 +273,7 @@ func _physics_process(delta):
       operation: 'add_rpc'
     });
     
-
+    expect(rpcResult.content[0].text).toContain('Added RPC annotation');
     
     // Step 10: Export the game
     const exportResult = await registry.executeTool('godot_build_project', {
@@ -279,7 +289,7 @@ func _physics_process(delta):
     const projectState = transport.getProjectState();
     expect(projectState.name).toBe('PlatformerGame');
     expect(Object.keys(projectState.scenes)).toHaveLength(1);
-    expect(Object.keys(projectState.scripts)).toHaveLength(0);
+    expect(Object.keys(projectState.scripts)).toHaveLength(1);
     
     console.log('✅ Full game creation workflow completed successfully!');
     console.log(`Project: ${projectState.name}`);
@@ -307,8 +317,8 @@ func _physics_process(delta):
     await registry.executeTool('godot_create_node', {
       parentPath: '.',
       nodeType: 'CharacterBody3D',
-      nodeName: 'Player',
       scenePath: 'res://scenes/World.tscn',
+      nodeName: 'Player',
       properties: {
         position: { x: 0, y: 1, z: 0 }
       }
