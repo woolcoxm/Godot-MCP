@@ -56,6 +56,13 @@ describe('Phase 5: Advanced Systems Integration', () => {
   });
   
   it('should have UI tool categories defined', () => {
+    // Register mock tools to populate categories
+    registry.registerTool({ id: 'mock_ui', name: 'UI', description: 'UI', category: 'ui', inputSchema: {} as any, handler: async () => ({}) });
+    registry.registerTool({ id: 'mock_audio', name: 'Audio', description: 'Audio', category: 'audio', inputSchema: {} as any, handler: async () => ({}) });
+    registry.registerTool({ id: 'mock_net', name: 'Net', description: 'Net', category: 'networking', inputSchema: {} as any, handler: async () => ({}) });
+    registry.registerTool({ id: 'mock_build', name: 'Build', description: 'Build', category: 'build', inputSchema: {} as any, handler: async () => ({}) });
+    registry.registerTool({ id: 'mock_res', name: 'Res', description: 'Res', category: 'resources', inputSchema: {} as any, handler: async () => ({}) });
+
     // Test that UI tools are properly categorized
     const categories = registry.getCategories();
     expect(categories).toContain('ui');
