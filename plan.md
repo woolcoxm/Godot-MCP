@@ -189,7 +189,7 @@ Tool Categories & Tool Count
 12	Runtime Control	16 (eval, input, screenshot, debug, state, errors, logs, performance, pause, timescale, process mode, window, OS info, wait, groups, find nodes)
 13	Editor Control	6 (launch, run, stop, state, filesystem, selection)
 14	Build & Export	4 (export, presets, checksum, deploy)
- 	Total	~134 tools
+	Total	~134 tools
 GDScript Components
 godot_operations.gd (Headless) — A single GDScript file that accepts operation name + JSON params via command line args, executes the operation, and prints JSON to stdout. Operations:
 - Scene CRUD (create, read, modify, save .tscn files)
