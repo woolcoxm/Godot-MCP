@@ -58,12 +58,19 @@ func _stop_server():
 		print("[Godot MCP] Server stopped")
 
 func _show_status():
-	var status = "Godot MCP Plugin Status:\n"
+	var status = "Godot MCP Plugin Status:\n\n"
 	if mcp_server:
-		status += "  Server: " + ("Running on port " + str(server_port) if mcp_server.is_server_running() else "Stopped") + "\n"
-		status += "  Connections: " + str(mcp_server.get_connection_count()) + "\n"
+		status += "Server: " + ("Running on port " + str(server_port) if mcp_server.is_server_running() else "Stopped") + "\n"
+		status += "Connections: " + str(mcp_server.get_connection_count()) + "\n"
 	else:
-		status += "  Server: Not initialized\n"
+		status += "Server: Not initialized\n"
 	
 	print(status)
-	# In a real implementation, we would show this in a dialog
+
+	var dialog = AcceptDialog.new()
+	dialog.title = "Godot MCP Status"
+	dialog.dialog_text = status
+	EditorInterface.get_base_control().add_child(dialog)
+	dialog.popup_centered()
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
