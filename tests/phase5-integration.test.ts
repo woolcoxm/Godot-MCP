@@ -45,7 +45,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
   let registry: ToolRegistry;
   let transport: MockTransport;
   
-  beforeEach(() => {
+  beforeEach(async () => {
     const mockServer = new MockServer();
     registry = new ToolRegistry(mockServer as any);
     transport = new MockTransport();
@@ -53,6 +53,9 @@ describe('Phase 5: Advanced Systems Integration', () => {
     // Import and register all tools
     // Note: In a real test, we would import the actual registerAllTools function
     // For this integration test, we'll test the tool definitions directly
+    // Let's actually import them so we have categories:
+    const module = await import('../src/tools/register-tools');
+    module.registerAllTools(registry, transport);
   });
   
   it('should have UI tool categories defined', () => {
