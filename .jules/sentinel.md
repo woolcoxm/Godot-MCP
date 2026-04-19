@@ -1,0 +1,4 @@
+## 2026-04-19 - [Path Traversal in Script Operations]
+**Vulnerability:** The script_ops.gd plugin allowed file access (via `FileAccess.open`) and operations to an arbitrary `script_path` provided by client input without checking if the path was constrained to the Godot `res://` directory. This permitted arbitrary file reads and writes (path traversal) outside of the project sandbox.
+**Learning:** File operations must enforce that paths originate from expected, restricted directories (e.g. starting with `res://`) and reject directory traversal attempts (`..` strings) when processing user-supplied inputs for filenames.
+**Prevention:** Implement `_is_path_safe(path: String) -> bool` and use it uniformly across all read, write, and delete operations in plugins handling client requests to ensure sandboxed filesystem access.

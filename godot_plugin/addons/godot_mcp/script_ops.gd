@@ -3,6 +3,11 @@ extends RefCounted
 
 # Script operations for live script editing in editor
 
+func _is_path_safe(path: String) -> bool:
+	# Ensure the path is within the res:// directory and doesn't contain traversal sequences
+	var simplified_path = path.simplify_path()
+	return simplified_path.begins_with("res://") and not ".." in simplified_path
+
 func read_script(script_path: String) -> Dictionary:
 	var result = {"success": false, "error": ""}
 	
@@ -11,6 +16,10 @@ func read_script(script_path: String) -> Dictionary:
 		result["error"] = "Script path is empty"
 		return result
 	
+	if not _is_path_safe(script_path):
+		result["error"] = "Unsafe script path: " + script_path
+		return result
+
 	# Try to load the script
 	var script = load(script_path)
 	if not script:
@@ -46,6 +55,10 @@ func write_script(script_path: String, content: String) -> Dictionary:
 		result["error"] = "Script path is empty"
 		return result
 	
+	if not _is_path_safe(script_path):
+		result["error"] = "Unsafe script path: " + script_path
+		return result
+
 	# Check if we're in editor
 	var editor_interface = Engine.get_main_loop().get_meta("__editor_interface", null)
 	if not editor_interface:
@@ -79,6 +92,10 @@ func write_script(script_path: String, content: String) -> Dictionary:
 	return result
 
 func _write_script_file(script_path: String, content: String) -> void:
+	if not _is_path_safe(script_path):
+		print("[Script Ops] Unsafe script path: ", script_path)
+		return
+
 	var dir = DirAccess.open("res://")
 	if not dir:
 		print("[Script Ops] Failed to open directory")
