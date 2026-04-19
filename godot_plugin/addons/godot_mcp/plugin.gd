@@ -42,20 +42,32 @@ func _exit_tree():
 	
 	print("[Godot MCP] Plugin unloaded")
 
+func _show_dialog(title: String, message: String):
+	var dialog = AcceptDialog.new()
+	dialog.title = title
+	dialog.dialog_text = message
+	get_editor_interface().get_base_control().add_child(dialog)
+	dialog.popup_centered()
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.confirmed.connect(dialog.queue_free)
+
 func _restart_server():
 	print("[Godot MCP] Restarting server...")
 	if mcp_server:
 		mcp_server.stop_server()
 		if mcp_server.start_server():
 			print("[Godot MCP] Server restarted on port ", server_port)
+			_show_dialog("Godot MCP", "Server restarted on port " + str(server_port))
 		else:
 			print("[Godot MCP] Failed to restart server")
+			_show_dialog("Godot MCP", "Failed to restart server")
 
 func _stop_server():
 	print("[Godot MCP] Stopping server...")
 	if mcp_server:
 		mcp_server.stop_server()
 		print("[Godot MCP] Server stopped")
+		_show_dialog("Godot MCP", "Server stopped")
 
 func _show_status():
 	var status = "Godot MCP Plugin Status:\n"
@@ -66,4 +78,4 @@ func _show_status():
 		status += "  Server: Not initialized\n"
 	
 	print(status)
-	# In a real implementation, we would show this in a dialog
+	_show_dialog("Godot MCP Plugin Status", status)
