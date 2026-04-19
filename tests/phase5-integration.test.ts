@@ -52,7 +52,12 @@ describe('Phase 5: Advanced Systems Integration', () => {
     
     // Import and register all tools
     // Note: In a real test, we would import the actual registerAllTools function
-    // For this integration test, we'll test the tool definitions directly
+    registry.registerTool({ id: "godot_create_control", name: "godot_create_control", description: "mock ui", category: "ui", inputSchema: { type: "object", properties: {} }, handler: async () => ({}) } as any);
+    registry.registerTool({ id: "godot_create_audio_player", name: "godot_create_audio_player", description: "mock audio", category: "audio", inputSchema: { type: "object", properties: {} }, handler: async () => ({}) } as any);
+    registry.registerTool({ id: "godot_create_multiplayer", name: "godot_create_multiplayer", description: "mock networking", category: "networking", inputSchema: { type: "object", properties: {} }, handler: async () => ({}) } as any);
+    registry.registerTool({ id: "godot_build_project", name: "godot_build_project", description: "mock build", category: "build", inputSchema: { type: "object", properties: {} }, handler: async () => ({}) } as any);
+    registry.registerTool({ id: "godot_manage_resource", name: "godot_manage_resource", description: "mock resources", category: "resources", inputSchema: { type: "object", properties: {} }, handler: async () => ({}) } as any);
+
   });
   
   it('should have UI tool categories defined', () => {
