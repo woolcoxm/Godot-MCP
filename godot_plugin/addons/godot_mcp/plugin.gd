@@ -3,6 +3,7 @@ extends EditorPlugin
 
 var mcp_server = null
 var server_port = 13337
+var _info_dialog = null
 
 func _enter_tree():
 	print("[Godot MCP] Plugin loading...")
@@ -21,6 +22,11 @@ func _enter_tree():
 	else:
 		print("[Godot MCP] Failed to load mcp_server.gd")
 	
+	# Setup info dialog for visual feedback
+	_info_dialog = AcceptDialog.new()
+	_info_dialog.title = "Godot MCP"
+	get_editor_interface().get_base_control().add_child(_info_dialog)
+
 	# Add plugin menu items
 	add_tool_menu_item("Godot MCP: Restart Server", _restart_server)
 	add_tool_menu_item("Godot MCP: Stop Server", _stop_server)
@@ -39,23 +45,42 @@ func _exit_tree():
 		mcp_server.stop_server()
 		remove_child(mcp_server)
 		mcp_server = null
+
+	# Clean up dialog
+	if _info_dialog:
+		_info_dialog.queue_free()
+		_info_dialog = null
 	
 	print("[Godot MCP] Plugin unloaded")
 
+func _show_dialog(title: String, text: String):
+	if _info_dialog:
+		_info_dialog.title = title
+		_info_dialog.dialog_text = text
+		_info_dialog.popup_centered()
+
 func _restart_server():
-	print("[Godot MCP] Restarting server...")
+	var msg = "Restarting server..."
+	print("[Godot MCP] " + msg)
 	if mcp_server:
 		mcp_server.stop_server()
 		if mcp_server.start_server():
-			print("[Godot MCP] Server restarted on port ", server_port)
+			msg = "Server restarted on port " + str(server_port)
+			print("[Godot MCP] " + msg)
+			_show_dialog("Server Restarted", msg)
 		else:
-			print("[Godot MCP] Failed to restart server")
+			msg = "Failed to restart server"
+			print("[Godot MCP] " + msg)
+			_show_dialog("Restart Failed", msg)
 
 func _stop_server():
-	print("[Godot MCP] Stopping server...")
+	var msg = "Stopping server..."
+	print("[Godot MCP] " + msg)
 	if mcp_server:
 		mcp_server.stop_server()
-		print("[Godot MCP] Server stopped")
+		msg = "Server stopped"
+		print("[Godot MCP] " + msg)
+		_show_dialog("Server Stopped", msg)
 
 func _show_status():
 	var status = "Godot MCP Plugin Status:\n"
@@ -66,4 +91,4 @@ func _show_status():
 		status += "  Server: Not initialized\n"
 	
 	print(status)
-	# In a real implementation, we would show this in a dialog
+	_show_dialog("Plugin Status", status)
