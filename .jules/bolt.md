@@ -1,0 +1,3 @@
+## 2024-05-15 - [O(1) Map Indexing for Registry Lookups]
+**Learning:** `Array.from(map.values()).filter(...)` can be a significant performance bottleneck when called frequently in lookup methods like `getToolsByCategory` or during paginated requests. Creating a secondary lookup `Map` (`toolsByCategory`) avoids O(N) array scans and significantly reduces registry lookup time.
+**Action:** When working with registries or collections that are heavily read and filtered by a specific property (like category), maintain a secondary `Map` acting as an index at registration time to ensure O(1) reads. Note that when testing these isolated registry components, mock objects must be explicitly registered to populate the dynamically derived state.
