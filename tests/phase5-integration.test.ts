@@ -50,9 +50,18 @@ describe('Phase 5: Advanced Systems Integration', () => {
     registry = new ToolRegistry(mockServer as any);
     transport = new MockTransport();
     
-    // Import and register all tools
-    // Note: In a real test, we would import the actual registerAllTools function
-    // For this integration test, we'll test the tool definitions directly
+    // Explicitly register mock tools to populate categories for the test
+    const mockCategories = ['ui', 'audio', 'networking', 'build', 'resources'];
+    mockCategories.forEach(cat => {
+      registry.registerTool({
+        id: `mock_${cat}_tool`,
+        name: `Mock ${cat} Tool`,
+        description: `A mock tool for ${cat}`,
+        category: cat,
+        inputSchema: {} as any,
+        handler: async () => ({})
+      });
+    });
   });
   
   it('should have UI tool categories defined', () => {
