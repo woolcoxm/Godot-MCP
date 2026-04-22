@@ -1,0 +1,3 @@
+## 2024-04-22 - Improved Godot Plugin Status Feedback
+**Learning:** Printing output to the console for user-initiated editor actions provides poor feedback because the console output panel may be hidden. Native UI dialogs are better suited for immediate user-initiated feedback.
+**Action:** Use native Godot `AcceptDialog` (or similar) to provide immediate feedback to the user inside editor plugins, and ensure the dialog cleans itself up on close (e.g. `dialog.confirmed.connect(dialog.queue_free)`).
