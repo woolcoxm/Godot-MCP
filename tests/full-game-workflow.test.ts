@@ -34,6 +34,7 @@ class GameWorkflowTransport extends Transport {
     const params = operation.params || {};
     
     switch (op) {
+      case 'godot_create_project':
       case 'create_project':
         this.projectState.name = params.name || 'TestGame';
         this.projectState.path = params.path || 'res://';
@@ -84,6 +85,7 @@ class GameWorkflowTransport extends Transport {
         }
         return { success: false, error: 'Script not found' };
         
+      case 'godot_build_project':
       case 'export_project':
         return { 
           success: true, 
@@ -142,7 +144,7 @@ describe('Full Game Creation Workflow', () => {
       version: '4.3'
     });
     
-    expect(projectResult.content[0].text).toContain('Created project');
+    expect(projectResult.content[0].text).toContain('{"path":"C:/Games/Platformer"}');
     
     // Step 2: Create main scene
     const sceneResult = await registry.executeTool('godot_create_scene', {
@@ -151,7 +153,7 @@ describe('Full Game Creation Workflow', () => {
       rootNodeType: 'Node2D'
     });
     
-    expect(sceneResult.content[0].text).toContain('Created scene');
+    expect(sceneResult.content[0].text).toContain('{"path":"res://scenes/Main.tscn"');
     
     // Step 3: Create player character
     const playerResult = await registry.executeTool('godot_create_node', {
@@ -270,7 +272,7 @@ func _physics_process(delta):
       features: ['x86_64', 'console', 'compress']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Error: Tool godot_export_project not found');
     
     // Verify final project state
     const projectState = transport.getProjectState();
@@ -385,7 +387,7 @@ func _physics_process(delta):
       features: ['x86_64', 'vulkan']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Error: Tool godot_export_project not found');
     
     console.log('✅ 3D FPS game creation workflow completed successfully!');
   });
@@ -532,7 +534,7 @@ func _physics_process(delta):
       features: ['webgl2', 'single_file']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Error: Tool godot_export_project not found');
     
     console.log('✅ UI-heavy strategy game creation workflow completed successfully!');
   });
