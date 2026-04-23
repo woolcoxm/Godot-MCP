@@ -140,12 +140,13 @@ export function createCreateNodeTool(transport: Transport): RegisteredTool {
       }
 
       return {
-        content: [
-          {
-            type: 'text',
-            text: `Created ${args.nodeType} node ${args.nodeName} at ${newNodePath} in ${args.scenePath}`
-          }
-        ]
+        scenePath: args.scenePath,
+        nodePath: newNodePath,
+        nodeType: args.nodeType,
+        nodeName: args.nodeName,
+        created: true,
+        message: `Node ${args.nodeName} created at ${newNodePath} in ${args.scenePath}`,
+        readOnlyHint: false,
       };
     },
     destructiveHint: true,
