@@ -66,4 +66,15 @@ func _show_status():
 		status += "  Server: Not initialized\n"
 	
 	print(status)
-	# In a real implementation, we would show this in a dialog
+
+	var dialog = AcceptDialog.new()
+	dialog.dialog_text = status
+	dialog.title = "Godot MCP Status"
+
+	# Connect signals to free the dialog to prevent memory leaks in Godot 4
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
+
+	# Add to the plugin tree and show
+	add_child(dialog)
+	dialog.popup_centered()
