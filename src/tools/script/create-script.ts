@@ -81,16 +81,12 @@ export function createCreateScriptTool(transport: Transport): RegisteredTool {
       }
 
       return {
-        path: args.path,
-        className: args.className,
-        extendsClass: args.extendsClass,
-        signals: args.signals?.length || 0,
-        variables: args.variables?.length || 0,
-        functions: args.functions?.length || 0,
-        constants: args.constants?.length || 0,
-        enums: args.enums?.length || 0,
-        message: `Script created successfully at ${args.path}`,
-            readOnlyHint: false,
+        content: [
+          {
+            type: 'text',
+            text: `Created script at ${args.path}`
+          }
+        ]
       };
     },
     destructiveHint: false,

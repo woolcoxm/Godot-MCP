@@ -75,11 +75,12 @@ export function createCreateSceneTool(transport: Transport): RegisteredTool {
       }
 
       return {
-        path: args.path,
-        rootType: args.rootType,
-        rootName: args.rootName,
-        message: `Scene created successfully at ${args.path}`,
-            readOnlyHint: false,
+        content: [
+          {
+            type: 'text',
+            text: `Created scene ${args.rootName} (${args.rootType}) at ${args.path}`
+          }
+        ]
       };
     },
     destructiveHint: false,
