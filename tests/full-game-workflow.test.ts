@@ -285,9 +285,10 @@ func _physics_process(delta):
     
     // Step 3: Create player with 3D camera
     await registry.executeTool('godot_create_node', {
+      scenePath: 'res://scenes/World.tscn',
       parentPath: '.',
       nodeType: 'CharacterBody3D',
-      name: 'Player',
+      nodeName: 'Player',
       properties: {
         position: { x: 0, y: 1, z: 0 }
       }
