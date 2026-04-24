@@ -3,6 +3,7 @@ import * as path from 'path';
 import { config } from '../config.js';
 import { logger } from '../utils/logger.js';
 import { connectionPool } from '../utils/connection-pool.js';
+import { isValidExecutable } from '../utils/security.js';
 
 export interface HeadlessOperation {
   operation: string;
@@ -51,6 +52,11 @@ export class HeadlessBridge {
 
   private spawnGodotProcess(): ChildProcess {
     const godotPath = config.godotPath;
+
+    if (!isValidExecutable(godotPath)) {
+      throw new Error(`Security Error: Blocked execution of potentially dangerous executable: ${godotPath}`);
+    }
+
     const scriptPath = path.join(__dirname, '../../godot/headless/godot_operations.gd');
     
     logger.debug(`Spawning Godot process: ${godotPath} --headless --script ${scriptPath}`);
