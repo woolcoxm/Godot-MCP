@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
+import { isValidExecutable, sanitizeArguments } from '../../utils/security.js';
 
 
 const launchEditorSchema = z.object({
@@ -49,9 +50,22 @@ export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
             editorExecutable = 'godot';
           }
           
+          if (!isValidExecutable(editorExecutable)) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: 'text',
+                  text: `Security Error: Blocked execution of potentially dangerous executable: ${editorExecutable}`,
+                },
+              ],
+            };
+          }
+
           // Build command arguments
           const args = validated.args || [];
-          const fullArgs = [validated.projectPath, ...args];
+          const safeArgs = sanitizeArguments(args);
+          const fullArgs = [validated.projectPath, ...safeArgs];
           
           // Launch editor
           editorProcess = spawn(editorExecutable, fullArgs, {

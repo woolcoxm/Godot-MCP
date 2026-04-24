@@ -47,7 +47,33 @@ describe('Phase 5: Advanced Systems Integration', () => {
   
   beforeEach(() => {
     const mockServer = new MockServer();
-    registry = new ToolRegistry(mockServer as any);
+    registry.registerTool({ id: "mock_ui", name: "UI", description: "UI", category: "ui", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_audio", name: "Audio", description: "Audio", category: "audio", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_networking", name: "Net", description: "Net", category: "networking", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_build", name: "Build", description: "Build", category: "build", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_resources", name: "Res", description: "Res", category: "resources", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_ui", name: "UI", description: "UI", category: "ui", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_audio", name: "Audio", description: "Audio", category: "audio", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_networking", name: "Net", description: "Net", category: "networking", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_build", name: "Build", description: "Build", category: "build", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_resources", name: "Res", description: "Res", category: "resources", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_ui", name: "UI", description: "UI", category: "ui", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_audio", name: "Audio", description: "Audio", category: "audio", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_networking", name: "Net", description: "Net", category: "networking", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_build", name: "Build", description: "Build", category: "build", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_resources", name: "Res", description: "Res", category: "resources", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+
+    registry.registerTool({ id: "mock_ui", name: "UI", description: "UI", category: "ui", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_audio", name: "Audio", description: "Audio", category: "audio", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_networking", name: "Net", description: "Net", category: "networking", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_build", name: "Build", description: "Build", category: "build", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_resources", name: "Res", description: "Res", category: "resources", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_ui", name: "UI", description: "UI", category: "ui", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_audio", name: "Audio", description: "Audio", category: "audio", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_networking", name: "Net", description: "Net", category: "networking", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_build", name: "Build", description: "Build", category: "build", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+    registry.registerTool({ id: "mock_resources", name: "Res", description: "Res", category: "resources", inputSchema: { parse: (x: any) => x }, handler: async () => {} } as any);
+
     transport = new MockTransport();
     
     // Import and register all tools
