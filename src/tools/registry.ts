@@ -18,6 +18,7 @@ export interface RegisteredTool {
 export class ToolRegistry {
   private server: McpServer;
   private tools: Map<string, RegisteredTool> = new Map();
+  private toolsByCategory: Map<string, RegisteredTool[]> = new Map();
 
   constructor(server: McpServer) {
     this.server = server;
@@ -56,8 +57,7 @@ export class ToolRegistry {
         pageSize: z.number().min(1).max(50).default(20).describe('Number of tools per page'),
       }),
       handler: async ({ category, page, pageSize }) => {
-        const categoryTools = Array.from(this.tools.values())
-          .filter(tool => tool.category === category);
+        const categoryTools = this.toolsByCategory.get(category) || [];
         
         const startIndex = (page - 1) * pageSize;
         const endIndex = startIndex + pageSize;
@@ -148,13 +148,39 @@ export class ToolRegistry {
   }
 
   registerTool(tool: RegisteredTool): void {
-    if (this.tools.has(tool.id)) {
-      logger.warn(`Tool ${tool.id} already registered, skipping`);
-      return;
+    const isUpdate = this.tools.has(tool.id);
+    if (isUpdate) {
+      logger.warn(`Tool ${tool.id} already registered, updating...`);
+      // Remove old tool from category map if category changed
+      const oldTool = this.tools.get(tool.id)!;
+      if (oldTool.category !== tool.category) {
+        const oldCategoryList = this.toolsByCategory.get(oldTool.category) || [];
+        this.toolsByCategory.set(
+          oldTool.category,
+          oldCategoryList.filter(t => t.id !== tool.id)
+        );
+      } else {
+        // If category is the same, we still need to replace the tool in the list
+        const categoryList = this.toolsByCategory.get(tool.category) || [];
+        const index = categoryList.findIndex(t => t.id === tool.id);
+        if (index !== -1) {
+          categoryList[index] = tool;
+        }
+      }
     }
 
     this.tools.set(tool.id, tool);
-    this.registerWithServer(tool);
+
+    if (!isUpdate || (isUpdate && this.tools.get(tool.id)!.category !== tool.category)) {
+      if (!this.toolsByCategory.has(tool.category)) {
+        this.toolsByCategory.set(tool.category, []);
+      }
+      this.toolsByCategory.get(tool.category)!.push(tool);
+    }
+
+    if (!isUpdate) {
+      this.registerWithServer(tool);
+    }
     logger.debug(`Registered tool: ${tool.id}`);
   }
 
@@ -208,8 +234,7 @@ export class ToolRegistry {
   }
 
   getToolsByCategory(categoryId: string, offset: number = 0, limit: number = Infinity): RegisteredTool[] {
-    const categoryTools = Array.from(this.tools.values())
-      .filter(tool => tool.category === categoryId);
+    const categoryTools = this.toolsByCategory.get(categoryId) || [];
     return categoryTools.slice(offset, offset + limit);
   }
 
@@ -218,11 +243,7 @@ export class ToolRegistry {
   }
 
   getCategories(): string[] {
-    const categories = new Set<string>();
-    for (const tool of this.tools.values()) {
-      categories.add(tool.category);
-    }
-    return Array.from(categories).sort();
+    return Array.from(this.toolsByCategory.keys()).sort();
   }
 
   searchTools(query: string, offset: number = 0, limit: number = 20): RegisteredTool[] {
