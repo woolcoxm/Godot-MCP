@@ -18,7 +18,7 @@ describe('Godot MCP Integration Demo', () => {
       '7. Add audio with godot_create_audio_player',
       '8. Configure multiplayer with godot_create_multiplayer',
       '9. Add RPC methods with godot_manage_rpc_packet',
-      '10. Export game with godot_export_project'
+      '10. Export game with godot_build_project'
     ];
     
     console.log('Complete Game Creation Workflow:');
@@ -26,7 +26,7 @@ describe('Godot MCP Integration Demo', () => {
     
     expect(workflow).toHaveLength(10);
     expect(workflow[0]).toContain('godot_create_project');
-    expect(workflow[9]).toContain('godot_export_project');
+    expect(workflow[9]).toContain('godot_build_project');
   });
   
   it('should have all 14 tool categories available', () => {
@@ -52,7 +52,7 @@ describe('Godot MCP Integration Demo', () => {
       { id: 'godot_create_scene', readOnly: false, destructive: true, idempotent: false },
       { id: 'godot_read_scene', readOnly: true, destructive: false, idempotent: true },
       { id: 'godot_modify_node', readOnly: false, destructive: true, idempotent: false },
-      { id: 'godot_export_project', readOnly: false, destructive: true, idempotent: false }
+      { id: 'godot_build_project', readOnly: false, destructive: true, idempotent: false }
     ];
     
     console.log('Tool Annotation Examples:');
