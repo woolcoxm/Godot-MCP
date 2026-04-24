@@ -37,7 +37,7 @@ class GameWorkflowTransport extends Transport {
       case 'create_project':
         this.projectState.name = params.name || 'TestGame';
         this.projectState.path = params.path || 'res://';
-        return { success: true, data: { path: this.projectState.path } };
+        return { success: true, data: { path: this.projectState.path, message: 'Created project successfully at ' + this.projectState.path } };
         
       case 'create_scene':
         const scenePath = params.path || `res://scenes/${params.name || 'Main'}.tscn`;
@@ -263,7 +263,7 @@ func _physics_process(delta):
     expect(rpcResult.content[0].text).toContain('Added RPC annotation');
     
     // Step 10: Export the game
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Windows Release',
       platform: 'Windows Desktop',
       exportPath: 'build/PlatformerGame.exe',
@@ -378,7 +378,7 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for multiple platforms
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Multiplatform',
       platform: 'Windows Desktop',
       exportPath: 'build/FPSGame.exe',
@@ -525,7 +525,7 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for web
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Web Export',
       platform: 'Web',
       exportPath: 'build/StrategyGame.html',
