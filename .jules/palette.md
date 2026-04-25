@@ -1,0 +1,3 @@
+## 2024-03-21 - Godot Editor Plugin UX Feedback
+**Learning:** For user-triggered status commands in a Godot Editor plugin, printing to the console is often missed because the console output panel may be hidden. Dynamically created UI dialogs like `AcceptDialog` do not automatically free themselves upon closing in Godot 4, causing memory leaks if not properly managed.
+**Action:** When creating status output or similar user-triggered events, use UI dialogs (e.g. `AcceptDialog`) instead of console prints. Always connect both `confirmed` and `canceled` signals of dynamically created dialogs to their `queue_free` method to prevent memory leaks in the editor.

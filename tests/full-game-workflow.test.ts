@@ -39,6 +39,9 @@ class GameWorkflowTransport extends Transport {
         this.projectState.path = params.path || 'res://';
         return { success: true, data: { path: this.projectState.path } };
         
+      case 'read_scene':
+        return { success: true, data: { content: "[gd_scene type=\"Node\"]\n\n[node name=\"Root\" type=\"Node\"]" } };
+
       case 'create_scene':
         const scenePath = params.path || `res://scenes/${params.name || 'Main'}.tscn`;
         this.projectState.scenes[scenePath] = {
@@ -63,6 +66,15 @@ class GameWorkflowTransport extends Transport {
         }
         return { success: false, error: 'Scene not found' };
         
+      case 'write_file':
+        if (params.path && params.path.endsWith('.gd')) {
+          this.projectState.scripts[params.path] = {
+            path: params.path,
+            content: params.content || ''
+          };
+        }
+        return { success: true, data: { path: params.path } };
+
       case 'create_script':
         const scriptPath = params.path || `res://scripts/${params.name || 'Script'}.gd`;
         this.projectState.scripts[scriptPath] = {
@@ -142,7 +154,7 @@ describe('Full Game Creation Workflow', () => {
       version: '4.3'
     });
     
-    expect(projectResult.content[0].text).toContain('Created project');
+    expect(projectResult.content[0].text).toContain('"path":"C:/Games/Platformer"');
     
     // Step 2: Create main scene
     const sceneResult = await registry.executeTool('godot_create_scene', {
@@ -151,31 +163,33 @@ describe('Full Game Creation Workflow', () => {
       rootNodeType: 'Node2D'
     });
     
-    expect(sceneResult.content[0].text).toContain('Created scene');
+    expect(sceneResult.content[0].text).toContain('Scene created successfully');
     
     // Step 3: Create player character
     const playerResult = await registry.executeTool('godot_create_node', {
       parentPath: '.',
       nodeType: 'CharacterBody2D',
-      name: 'Player',
+      nodeName: 'Player',
+      scenePath: 'res://scenes/Main.tscn',
       properties: {
         position: { x: 100, y: 300 },
         collision_shape: 'CapsuleShape2D'
       }
     });
     
-    expect(playerResult.content[0].text).toContain('Created CharacterBody2D');
+    expect(playerResult.content[0].text).toContain('"nodeType":"CharacterBody2D"');
     
     // Step 4: Create player sprite
-    const spriteResult = await registry.executeTool('godot_create_sprite2d', {
+    const spriteResult = await registry.executeTool('godot_sprite2d', {
       parentPath: './Player',
+      scenePath: 'res://scenes/Main.tscn',
       texturePath: 'res://assets/player.png',
       name: 'Sprite',
       flipH: false,
       centered: true
     });
     
-    expect(spriteResult.content[0].text).toContain('Created Sprite2D');
+    expect(spriteResult.content[0].text).toContain('"spriteType":"Sprite2D"');
     
     // Step 5: Create player script
     const scriptResult = await registry.executeTool('godot_create_script', {
@@ -209,7 +223,7 @@ func _physics_process(delta):
   move_and_slide()`
     });
     
-    expect(scriptResult.content[0].text).toContain('Created script');
+    expect(scriptResult.content[0].text).toContain('Script created successfully');
     
     // Step 6: Create UI controls
     const uiResult = await registry.executeTool('godot_create_control', {
@@ -229,7 +243,7 @@ func _physics_process(delta):
       playerType: 'AudioStreamPlayer',
       name: 'BackgroundMusic',
       streamPath: 'res://audio/music.ogg',
-      volumeDb: -10,
+      volume: -10,
       autoplay: true,
       loop: true
     });
@@ -263,14 +277,14 @@ func _physics_process(delta):
     expect(rpcResult.content[0].text).toContain('Added RPC annotation');
     
     // Step 10: Export the game
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Windows Release',
       platform: 'Windows Desktop',
       exportPath: 'build/PlatformerGame.exe',
       features: ['x86_64', 'console', 'compress']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     // Verify final project state
     const projectState = transport.getProjectState();
@@ -304,7 +318,8 @@ func _physics_process(delta):
     await registry.executeTool('godot_create_node', {
       parentPath: '.',
       nodeType: 'CharacterBody3D',
-      name: 'Player',
+      nodeName: 'Player',
+      scenePath: 'res://scenes/Main.tscn',
       properties: {
         position: { x: 0, y: 1, z: 0 }
       }
@@ -313,6 +328,7 @@ func _physics_process(delta):
     // Step 4: Create FPS camera
     await registry.executeTool('godot_create_camera3d', {
       parentPath: './Player',
+      scenePath: 'res://scenes/Main.tscn',
       name: 'Camera',
       fov: 70,
       current: true,
@@ -378,14 +394,14 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for multiple platforms
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Multiplatform',
       platform: 'Windows Desktop',
       exportPath: 'build/FPSGame.exe',
       features: ['x86_64', 'vulkan']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     console.log('✅ 3D FPS game creation workflow completed successfully!');
   });
@@ -525,14 +541,14 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for web
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Web Export',
       platform: 'Web',
       exportPath: 'build/StrategyGame.html',
       features: ['webgl2', 'single_file']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     console.log('✅ UI-heavy strategy game creation workflow completed successfully!');
   });
