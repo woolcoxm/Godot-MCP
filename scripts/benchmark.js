@@ -43,14 +43,21 @@ async function runBenchmarks() {
     
     'Tool Registry Lookup': await benchmarkOperation('Tool Registry Lookup', async () => {
       // Simulate tool lookup
-      const mockTools = Array.from({ length: 100 }, (_, i) => ({
-        id: `tool_${i}`,
-        name: `Tool ${i}`,
-        category: i % 10 === 0 ? 'system' : '3d'
-      }));
+      const mockToolsByCategory = new Map();
+      mockToolsByCategory.set('system', []);
+      mockToolsByCategory.set('3d', []);
+
+      for (let i = 0; i < 100; i++) {
+        const category = i % 10 === 0 ? 'system' : '3d';
+        mockToolsByCategory.get(category).push({
+          id: `tool_${i}`,
+          name: `Tool ${i}`,
+          category: category
+        });
+      }
       
       for (let i = 0; i < 1000; i++) {
-        mockTools.filter(t => t.category === '3d');
+        mockToolsByCategory.get('3d');
       }
     }),
     
