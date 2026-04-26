@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ToolRegistry } from '../src/tools/registry';
 import { Transport, TransportMode } from '../src/transports/transport';
+import { registerAllTools } from '../src/tools/register-tools';
 
 // Mock server for ToolRegistry
 class MockServer {
@@ -53,6 +54,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
     // Import and register all tools
     // Note: In a real test, we would import the actual registerAllTools function
     // For this integration test, we'll test the tool definitions directly
+    registerAllTools(registry, transport);
   });
   
   it('should have UI tool categories defined', () => {

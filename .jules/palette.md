@@ -1,0 +1,3 @@
+## 2024-05-15 - Godot Editor Plugin UX and Memory Management
+**Learning:** For Godot editor plugins, using `print()` for user-triggered commands provides a poor UX because the console output panel might be hidden, leaving the user unaware of the command's result. Additionally, in Godot 4, dynamically created UI dialogs (like `AcceptDialog`) do not automatically delete themselves when closed, leading to memory leaks in editor plugins if not properly managed.
+**Action:** Use UI dialogs like `AcceptDialog` instead of console prints for user-triggered status commands. Always connect their `confirmed` and `canceled` signals to `queue_free()` to prevent memory leaks.
