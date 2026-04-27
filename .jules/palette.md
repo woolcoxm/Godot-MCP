@@ -1,3 +1,0 @@
-## 2024-04-27 - Godot Editor UI Feedback
-**Learning:** Console output in Godot plugins is often missed by users because the output panel may be hidden. When showing status to users, dynamic UI dialogs (like AcceptDialog) provide better UX. However, they don't delete themselves when closed and must be added to the editor's base control for proper styling/centering.
-**Action:** When creating status output or user notifications, use `AcceptDialog` added via `get_editor_interface().get_base_control().add_child()` and connect both `canceled` and `confirmed` signals to `queue_free()` to prevent memory leaks while providing immediate visual feedback.

@@ -37,7 +37,12 @@ class GameWorkflowTransport extends Transport {
       case 'read_scene':
         const readScenePath = params.path;
         if (this.projectState.scenes[readScenePath]) {
-          return { success: true, data: { content: '[node name="Root" type="Node2D"]\n' } };
+          let content = `[node name="Root" type="${this.projectState.scenes[readScenePath].rootNode}"]\n`;
+          for (const nodeName in this.projectState.scenes[readScenePath].nodes) {
+              const node = this.projectState.scenes[readScenePath].nodes[nodeName];
+              content += `[node name="${node.name}" type="${node.type}" parent="."]\n`;
+          }
+          return { success: true, data: { content } };
         }
         return { success: true, data: { content: '[node name="Root" type="Node2D"]\n' } };
 
@@ -56,19 +61,18 @@ class GameWorkflowTransport extends Transport {
         return { success: true, data: `Scene created successfully at ${scenePath}` };
         
       case 'create_node':
-        const scene = this.projectState.scenes[params.parentPath] || 
-                     Object.values(this.projectState.scenes)[0];
-        if (scene) {
-          const nodeId = `node_${Object.keys(scene.nodes).length + 1}`;
-          scene.nodes[nodeId] = {
-            type: params.nodeType || params.node_type,
-            name: params.name || params.nodeName,
-            properties: params.properties || {},
-            children: []
-          };
-          return { success: true, data: `Created node ${params.name || params.nodeName}` };
+        const name = params.name || params.nodeName;
+        const parentPath = params.parentPath === '.' ? '' : params.parentPath + '/';
+        // Add to project state so subsequent 'read_scene' has it if needed.
+        if (params.scenePath && this.projectState.scenes[params.scenePath]) {
+            this.projectState.scenes[params.scenePath].nodes[name] = {
+                type: params.nodeType || params.node_type,
+                name: name,
+                properties: params.properties || {},
+                children: []
+            };
         }
-        return { success: false, error: 'Scene not found' };
+        return { success: true, data: `Node ${name} created at ${parentPath}${name} in ${params.scenePath}` };
         
       case 'create_script':
         const scriptPath = params.path || `res://scripts/${params.name || 'Script'}.gd`;
@@ -174,7 +178,7 @@ describe('Full Game Creation Workflow', () => {
       }
     });
     
-    expect(playerResult.content[0].text).toContain('Node Player created at');
+    expect(playerResult.content[0].text).toContain('Node Player created at Player in');
     
     // Step 4: Create player sprite
     const spriteResult = await registry.executeTool('godot_create_node', {
