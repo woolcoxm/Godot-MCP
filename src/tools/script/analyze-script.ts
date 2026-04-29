@@ -393,14 +393,22 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
         }
       }
 
+      // Performance optimization: Single-pass aggregation of issue types O(n) instead of O(3n)
+      const issueCounts = analysis.issues.reduce((acc, issue) => {
+        if (issue.type === 'warning') acc.warnings++;
+        else if (issue.type === 'error') acc.errors++;
+        else if (issue.type === 'info') acc.info++;
+        return acc;
+      }, { warnings: 0, errors: 0, info: 0 });
+
       return {
         scriptPath: args.scriptPath,
         analysis,
         summary: {
           totalIssues: analysis.issues.length,
-          warnings: analysis.issues.filter(i => i.type === 'warning').length,
-          errors: analysis.issues.filter(i => i.type === 'error').length,
-          info: analysis.issues.filter(i => i.type === 'info').length,
+          warnings: issueCounts.warnings,
+          errors: issueCounts.errors,
+          info: issueCounts.info,
           metrics: analysis.metrics,
         },
         message: `Analyzed ${args.scriptPath}: ${analysis.issues.length} issues found`,
