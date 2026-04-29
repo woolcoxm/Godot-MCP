@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
+import { sanitizeArguments } from '../../utils/security.js';
 
 const runProjectSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -44,7 +45,7 @@ export function createRunProjectTool(_transport: Transport): RegisteredTool {
           const validated = runProjectSchema.parse(data);
           
           let command = 'godot';
-          const args = validated.args || [];
+          const args = sanitizeArguments(validated.args || []);
           
           if (validated.platform === 'editor') {
             // Run in editor

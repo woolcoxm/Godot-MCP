@@ -1,0 +1,4 @@
+## 2024-05-15 - Command Injection Vulnerability in Godot Editor Launch Tools
+**Vulnerability:** The Godot editor launch tools (`launch-editor.ts` and `run-project.ts`) accepted an arbitrary `editorExecutable` and `args` from user input without validation, passing them directly to `spawn()`. This allowed for arbitrary command execution (e.g., executing `sh` with dangerous arguments).
+**Learning:** External processes launched via `spawn` or `exec` must never implicitly trust paths, executables, or arguments provided by user input. This is a classic Command/Argument Injection vulnerability.
+**Prevention:** Created a `src/utils/security.ts` file with validation functions (`isValidExecutable`, `sanitizeArguments`, `isPathSafe`) that block known dangerous binaries (shells, interpreters) and specific Godot flags (`--script`, `--execute`) to prevent arbitrary code execution, and applied them to all `spawn` calls.
