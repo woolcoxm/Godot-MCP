@@ -30,7 +30,10 @@ export function createCreateProjectTool(transport: Transport): RegisteredTool {
         throw new Error(result.error || 'Failed to create project');
       }
 
-      return result.data;
+      return {
+        ...result.data,
+        message: `Created project ${args.name} at ${args.path}`
+      };
     },
     destructiveHint: false,
     idempotentHint: false,
