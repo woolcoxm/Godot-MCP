@@ -1,0 +1,4 @@
+## 2026-05-01 - Prevented RCE and Argument Injection in Tool Execution
+**Vulnerability:** `godot_launch_editor` and `godot_run_project` tools passed user-supplied `args` and `editorPath` directly to `child_process.spawn`. This allowed a malicious user or prompt to execute arbitrary code or bypass security constraints (e.g. injecting `--script malicious.gd`).
+**Learning:** Argument filtering and executable allowlisting are required for wrapping CLIs. Just using `spawn` without shell interpolation is not enough to prevent logical RCE if the binary itself allows executing arbitrary scripts (like Godot's `--script` flag).
+**Prevention:** Always use strict allowlists for executable paths and explicitly filter/sanitize dangerous flags from user-provided argument arrays before passing them to `spawn`. Ensure file paths are protected against directory traversal (`..`).
