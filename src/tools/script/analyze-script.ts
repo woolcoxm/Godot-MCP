@@ -393,14 +393,20 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
         }
       }
 
+      // Calculate issue counts in a single pass O(n) instead of O(3n) with multiple filters
+      const issueCounts = analysis.issues.reduce((acc, issue) => {
+        acc[issue.type]++;
+        return acc;
+      }, { warning: 0, error: 0, info: 0 });
+
       return {
         scriptPath: args.scriptPath,
         analysis,
         summary: {
           totalIssues: analysis.issues.length,
-          warnings: analysis.issues.filter(i => i.type === 'warning').length,
-          errors: analysis.issues.filter(i => i.type === 'error').length,
-          info: analysis.issues.filter(i => i.type === 'info').length,
+          warnings: issueCounts.warning,
+          errors: issueCounts.error,
+          info: issueCounts.info,
           metrics: analysis.metrics,
         },
         message: `Analyzed ${args.scriptPath}: ${analysis.issues.length} issues found`,
