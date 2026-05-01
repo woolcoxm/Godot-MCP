@@ -172,8 +172,15 @@ export function createBatchOperationsTool(transport: Transport): RegisteredTool 
         throw new Error(`Failed to save scene: ${writeResult.error}`);
       }
 
-      const successfulOps = results.filter(r => r.success).length;
-      const failedOps = results.filter(r => !r.success).length;
+      // Calculate successful and failed operations in a single pass O(n)
+      const { successfulOps, failedOps } = results.reduce(
+        (acc, r) => {
+          if (r.success) acc.successfulOps++;
+          else acc.failedOps++;
+          return acc;
+        },
+        { successfulOps: 0, failedOps: 0 }
+      );
       
       return {
         scenePath: args.scenePath,
