@@ -48,7 +48,7 @@ const testCases = [
       const lines = sceneContent.split('\n');
       console.log(`    Simulated scene with ${nodeCount} nodes (${lines.length} lines)`);
       
-      if (lines.length === nodeCount + 3) { // +3 for header lines
+      if (lines.length === nodeCount + 4) { // +4 for header lines + empty string at end from split
         console.log('    ✅ Scene structure valid');
         return true;
       } else {
