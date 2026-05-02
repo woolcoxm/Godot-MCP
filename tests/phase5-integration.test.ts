@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ToolRegistry } from '../src/tools/registry';
 import { Transport, TransportMode } from '../src/transports/transport';
+import { registerAllTools } from '../src/tools/register-tools';
 
 // Mock server for ToolRegistry
 class MockServer {
@@ -57,6 +58,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
   
   it('should have UI tool categories defined', () => {
     // Test that UI tools are properly categorized
+    registerAllTools(registry, transport);
     const categories = registry.getCategories();
     expect(categories).toContain('ui');
     expect(categories).toContain('audio');
