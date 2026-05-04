@@ -393,14 +393,24 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
         }
       }
 
+      // ⚡ Bolt: Replaced multiple .filter(x).length passes with a single reduce loop.
+      // Expected impact: O(n) instead of O(3n), avoiding intermediate array allocations.
+      const issueCounts = analysis.issues.reduce(
+        (counts, issue) => {
+          counts[issue.type]++;
+          return counts;
+        },
+        { warning: 0, error: 0, info: 0 }
+      );
+
       return {
         scriptPath: args.scriptPath,
         analysis,
         summary: {
           totalIssues: analysis.issues.length,
-          warnings: analysis.issues.filter(i => i.type === 'warning').length,
-          errors: analysis.issues.filter(i => i.type === 'error').length,
-          info: analysis.issues.filter(i => i.type === 'info').length,
+          warnings: issueCounts.warning,
+          errors: issueCounts.error,
+          info: issueCounts.info,
           metrics: analysis.metrics,
         },
         message: `Analyzed ${args.scriptPath}: ${analysis.issues.length} issues found`,
