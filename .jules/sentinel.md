@@ -1,0 +1,4 @@
+## 2024-05-18 - Argument Injection & Command Execution via Godot spawn()
+**Vulnerability:** User inputs (`projectPath`, `editorPath`, `args`) in tools like `LaunchEditor` and `RunProject` were passed directly to `spawn()` without sanitization or validation, enabling arbitrary command execution (e.g. by passing `--script <malicious.gd>`) and directory traversal.
+**Learning:** Even when invoking a specific executable like 'godot', the array of command line arguments can be used to hijack execution flow if the executable supports scripting or other dangerous flags.
+**Prevention:** Implement strict executable allowlisting (`isValidExecutable`), general argument sanitization (`sanitizeArguments` filtering `--script`), user-specific argument sanitization (`sanitizeUserArguments` blocking `--headless`, `--export`), and path traversal checks (`isPathSafe`).
