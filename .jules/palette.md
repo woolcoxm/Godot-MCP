@@ -1,0 +1,3 @@
+## 2024-05-17 - Godot Editor Plugin UX Dialogs and Memory Leaks
+**Learning:** For Godot editor plugins, user-triggered status commands should use UI dialogs (like `AcceptDialog`) instead of console prints, as the console output panel may be hidden. However, in Godot 4, dynamically created UI dialogs do not delete themselves automatically upon closing.
+**Action:** When adding dynamically created UI elements (like `AcceptDialog`) to the Godot Editor interface, add them to the editor's base control using `get_editor_interface().get_base_control().add_child()`. Always connect their `confirmed` and `canceled` signals to `queue_free()` (e.g., `dialog.confirmed.connect(dialog.queue_free)`) to prevent memory leaks in editor plugins.
