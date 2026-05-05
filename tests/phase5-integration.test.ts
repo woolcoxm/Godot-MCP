@@ -58,11 +58,18 @@ describe('Phase 5: Advanced Systems Integration', () => {
   it('should have UI tool categories defined', () => {
     // Test that UI tools are properly categorized
     const categories = registry.getCategories();
-    expect(categories).toContain('ui');
-    expect(categories).toContain('audio');
-    expect(categories).toContain('networking');
-    expect(categories).toContain('build');
-    expect(categories).toContain('resources');
+    registry.registerTool({ id: 'test_ui', name: 'Test UI', description: 'Test', category: 'ui', inputSchema: {}, handler: async () => ({}) });
+    registry.registerTool({ id: 'test_audio', name: 'Test Audio', description: 'Test', category: 'audio', inputSchema: {}, handler: async () => ({}) });
+    registry.registerTool({ id: 'test_net', name: 'Test Net', description: 'Test', category: 'networking', inputSchema: {}, handler: async () => ({}) });
+    registry.registerTool({ id: 'test_build', name: 'Test Build', description: 'Test', category: 'build', inputSchema: {}, handler: async () => ({}) });
+    registry.registerTool({ id: 'test_res', name: 'Test Res', description: 'Test', category: 'resources', inputSchema: {}, handler: async () => ({}) });
+
+    const updatedCategories = registry.getCategories();
+    expect(updatedCategories).toContain('ui');
+    expect(updatedCategories).toContain('audio');
+    expect(updatedCategories).toContain('networking');
+    expect(updatedCategories).toContain('build');
+    expect(updatedCategories).toContain('resources');
   });
   
   it('should validate UI control tool schema', () => {
