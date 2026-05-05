@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
-
+import { isValidExecutable, sanitizeUserArguments } from '../../utils/security.js';
 
 const launchEditorSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -49,8 +49,25 @@ export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
             editorExecutable = 'godot';
           }
           
+          if (!isValidExecutable(editorExecutable)) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Failed to launch editor: Invalid executable path '${editorExecutable}'`,
+                },
+              ],
+            };
+          }
+
+          if (validated.projectPath.startsWith('-')) {
+            return {
+              content: [{ type: 'text', text: `Failed to launch editor: Invalid project path '${validated.projectPath}' (cannot start with '-')` }],
+            };
+          }
+
           // Build command arguments
-          const args = validated.args || [];
+          const args = validated.args ? sanitizeUserArguments(validated.args) : [];
           const fullArgs = [validated.projectPath, ...args];
           
           // Launch editor
