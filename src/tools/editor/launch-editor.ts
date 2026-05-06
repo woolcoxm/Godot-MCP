@@ -52,10 +52,11 @@ export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
           
           // Build command arguments
           const args = validated.args || [];
+          const fullArgs = [validated.projectPath, ...sanitizeUserArguments(args)];
+
           if (!isPathSafe(validated.projectPath)) {
             throw new Error('Invalid project path provided');
           }
-          const fullArgs = [validated.projectPath, ...sanitizeUserArguments(args)];
 
           
           // Launch editor

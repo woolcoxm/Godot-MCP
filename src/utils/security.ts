@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export function isPathSafe(inputPath: string): boolean {
   if (!inputPath) return false;
   if (inputPath.trim().startsWith('-')) return false;
