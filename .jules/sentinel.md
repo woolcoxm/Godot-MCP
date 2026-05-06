@@ -1,0 +1,4 @@
+## 2024-05-06 - [Missing Path Validation on user input for child processes]
+**Vulnerability:** The project executes Godot commands using `spawn` and allows users to specify project paths via tool inputs (e.g. `godot_launch_editor`, `godot_run_project`). If a malicious user supplies a path starting with a hyphen (like `--script`), `spawn` might interpret this as an argument, allowing arbitrary code execution (command/flag injection).
+**Learning:** Node's `child_process.spawn` passes arguments exactly as provided, but Godot executable parses these arguments. If an argument meant to be a path starts with a flag (like `--script malicious.gd`), Godot can execute arbitrary code.
+**Prevention:** Use a validation utility to check that paths from untrusted inputs do not contain dangerous characters or start with flags (`-`), and explicitly sanitize arguments using the `isPathSafe` helper functions.

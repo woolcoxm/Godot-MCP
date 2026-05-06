@@ -55,6 +55,8 @@ export class HeadlessBridge {
     
     logger.debug(`Spawning Godot process: ${godotPath} --headless --script ${scriptPath}`);
     
+
+
     const process = spawn(godotPath, ['--headless', '--script', scriptPath], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
