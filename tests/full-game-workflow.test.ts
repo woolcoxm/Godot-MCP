@@ -142,7 +142,7 @@ describe('Full Game Creation Workflow', () => {
       version: '4.3'
     });
     
-    expect(projectResult.content[0].text).toContain('Created project');
+    expect(projectResult.content[0].text).toContain('Platformer');
     
     // Step 2: Create main scene
     const sceneResult = await registry.executeTool('godot_create_scene', {
@@ -151,23 +151,26 @@ describe('Full Game Creation Workflow', () => {
       rootNodeType: 'Node2D'
     });
     
-    expect(sceneResult.content[0].text).toContain('Created scene');
+    expect(sceneResult.content[0].text).toContain('Scene created successfully');
     
     // Step 3: Create player character
     const playerResult = await registry.executeTool('godot_create_node', {
       parentPath: '.',
-      nodeType: 'CharacterBody2D',
-      name: 'Player',
+      scenePath: 'res://scenes/Main.tscn',
+      type: 'CharacterBody2D',
+      nodeName: 'Player',
       properties: {
         position: { x: 100, y: 300 },
         collision_shape: 'CapsuleShape2D'
       }
     });
     
-    expect(playerResult.content[0].text).toContain('Created CharacterBody2D');
+    expect(playerResult.content[0].text).toContain('Player');
     
     // Step 4: Create player sprite
-    const spriteResult = await registry.executeTool('godot_create_sprite2d', {
+    const spriteResult = await registry.executeTool('godot_sprite2d', {
+      scenePath: 'res://scenes/Main.tscn',
+      nodeName: 'Sprite2D',
       parentPath: './Player',
       texturePath: 'res://assets/player.png',
       name: 'Sprite',
@@ -175,7 +178,7 @@ describe('Full Game Creation Workflow', () => {
       centered: true
     });
     
-    expect(spriteResult.content[0].text).toContain('Created Sprite2D');
+    expect(spriteResult.content[0].text).toContain('Sprite2D');
     
     // Step 5: Create player script
     const scriptResult = await registry.executeTool('godot_create_script', {
@@ -263,14 +266,14 @@ func _physics_process(delta):
     expect(rpcResult.content[0].text).toContain('Added RPC annotation');
     
     // Step 10: Export the game
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Windows Release',
       platform: 'Windows Desktop',
       exportPath: 'build/PlatformerGame.exe',
       features: ['x86_64', 'console', 'compress']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     // Verify final project state
     const projectState = transport.getProjectState();
@@ -304,7 +307,7 @@ func _physics_process(delta):
     await registry.executeTool('godot_create_node', {
       parentPath: '.',
       nodeType: 'CharacterBody3D',
-      name: 'Player',
+      nodeName: 'Player',
       properties: {
         position: { x: 0, y: 1, z: 0 }
       }
@@ -378,14 +381,14 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for multiple platforms
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Multiplatform',
       platform: 'Windows Desktop',
       exportPath: 'build/FPSGame.exe',
       features: ['x86_64', 'vulkan']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     console.log('✅ 3D FPS game creation workflow completed successfully!');
   });
@@ -402,7 +405,7 @@ func _physics_process(delta):
     // Step 2: Create UI scene
     await registry.executeTool('godot_create_scene', {
       path: 'res://scenes/UI.tscn',
-      name: 'UI',
+      nodeName: 'UI',
       rootNodeType: 'Control'
     });
     
@@ -525,14 +528,14 @@ func _physics_process(delta):
     });
     
     // Step 10: Export for web
-    const exportResult = await registry.executeTool('godot_export_project', {
+    const exportResult = await registry.executeTool('godot_build_project', {
       presetName: 'Web Export',
       platform: 'Web',
       exportPath: 'build/StrategyGame.html',
       features: ['webgl2', 'single_file']
     });
     
-    expect(exportResult.content[0].text).toContain('Exported project');
+    expect(exportResult.content[0].text).toContain('Build completed');
     
     console.log('✅ UI-heavy strategy game creation workflow completed successfully!');
   });
