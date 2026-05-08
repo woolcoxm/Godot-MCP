@@ -3,6 +3,7 @@ import * as path from 'path';
 import { config } from '../config.js';
 import { logger } from '../utils/logger.js';
 import { connectionPool } from '../utils/connection-pool.js';
+import { sanitizeArguments } from '../utils/security.js';
 
 export interface HeadlessOperation {
   operation: string;
@@ -55,7 +56,8 @@ export class HeadlessBridge {
     
     logger.debug(`Spawning Godot process: ${godotPath} --headless --script ${scriptPath}`);
     
-    const process = spawn(godotPath, ['--headless', '--script', scriptPath], {
+    const args = sanitizeArguments(['--headless', '--script', scriptPath]);
+    const process = spawn(godotPath, args, {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
