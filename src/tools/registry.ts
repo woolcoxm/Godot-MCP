@@ -141,7 +141,7 @@ export class ToolRegistry {
     
     if (tool.id.toLowerCase().includes(query)) score += 3;
     if (tool.name.toLowerCase().includes(query)) score += 2;
-    if (tool.description.toLowerCase().includes(query)) score += 1;
+    if ((tool.description || '').toLowerCase().includes(query)) score += 1;
     if (tool.category.toLowerCase().includes(query)) score += 0.5;
     
     return score;
