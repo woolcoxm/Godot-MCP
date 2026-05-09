@@ -57,6 +57,11 @@ describe('Phase 5: Advanced Systems Integration', () => {
   
   it('should have UI tool categories defined', () => {
     // Test that UI tools are properly categorized
+    registry.registerTool({ id: 'mock_ui', name: 'Mock UI', description: 'Mock', category: 'ui', inputSchema: {} as any, handler: async () => ({ content: [] }), readOnlyHint: true, destructiveHint: false, idempotentHint: true });
+    registry.registerTool({ id: 'mock_audio', name: 'Mock Audio', description: 'Mock', category: 'audio', inputSchema: {} as any, handler: async () => ({ content: [] }), readOnlyHint: true, destructiveHint: false, idempotentHint: true });
+    registry.registerTool({ id: 'mock_networking', name: 'Mock Net', description: 'Mock', category: 'networking', inputSchema: {} as any, handler: async () => ({ content: [] }), readOnlyHint: true, destructiveHint: false, idempotentHint: true });
+    registry.registerTool({ id: 'mock_build', name: 'Mock Build', description: 'Mock', category: 'build', inputSchema: {} as any, handler: async () => ({ content: [] }), readOnlyHint: true, destructiveHint: false, idempotentHint: true });
+    registry.registerTool({ id: 'mock_resources', name: 'Mock Res', description: 'Mock', category: 'resources', inputSchema: {} as any, handler: async () => ({ content: [] }), readOnlyHint: true, destructiveHint: false, idempotentHint: true });
     const categories = registry.getCategories();
     expect(categories).toContain('ui');
     expect(categories).toContain('audio');
