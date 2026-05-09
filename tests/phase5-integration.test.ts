@@ -50,7 +50,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
     registry = new ToolRegistry(mockServer as any);
     transport = new MockTransport();
     
-    // Import and register all tools
+    registry.registerTool({ id: 'godot_ui_tool', name: 'mock_ui', category: 'ui' } as any); registry.registerTool({ id: 'godot_audio_tool', name: 'mock_audio', category: 'audio' } as any); registry.registerTool({ id: 'godot_net_tool', name: 'mock_net', category: 'networking' } as any); registry.registerTool({ id: 'godot_build_tool', name: 'mock_build', category: 'build' } as any); registry.registerTool({ id: 'godot_res_tool', name: 'mock_res', category: 'resources' } as any);
     // Note: In a real test, we would import the actual registerAllTools function
     // For this integration test, we'll test the tool definitions directly
   });

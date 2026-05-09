@@ -103,7 +103,7 @@ export class ToolRegistry {
           if (
             tool.id.toLowerCase().includes(searchQuery) ||
             tool.name.toLowerCase().includes(searchQuery) ||
-            tool.description.toLowerCase().includes(searchQuery) ||
+            (tool.description || '').toLowerCase().includes(searchQuery) ||
             tool.category.toLowerCase().includes(searchQuery)
           ) {
             results.push({
@@ -141,7 +141,7 @@ export class ToolRegistry {
     
     if (tool.id.toLowerCase().includes(query)) score += 3;
     if (tool.name.toLowerCase().includes(query)) score += 2;
-    if (tool.description.toLowerCase().includes(query)) score += 1;
+    if ((tool.description || '').toLowerCase().includes(query)) score += 1;
     if (tool.category.toLowerCase().includes(query)) score += 0.5;
     
     return score;
@@ -233,7 +233,7 @@ export class ToolRegistry {
       if (
         tool.id.toLowerCase().includes(searchQuery) ||
         tool.name.toLowerCase().includes(searchQuery) ||
-        tool.description.toLowerCase().includes(searchQuery) ||
+        (tool.description || '').toLowerCase().includes(searchQuery) ||
         tool.category.toLowerCase().includes(searchQuery)
       ) {
         results.push(tool);
