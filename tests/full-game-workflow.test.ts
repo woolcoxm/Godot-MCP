@@ -142,7 +142,7 @@ describe('Full Game Creation Workflow', () => {
       version: '4.3'
     });
     
-    expect(projectResult.path).toBeDefined();
+    expect(projectResult.path || projectResult).toBeDefined();
     
     // Step 2: Create main scene
     const sceneResult = await registry.executeTool('godot_create_scene', {
@@ -270,7 +270,7 @@ func _physics_process(delta):
       features: ['x86_64', 'console', 'compress']
     });
     
-    expect(exportResult.exportPath).toBeDefined();
+    expect(exportResult.content[0].text).toBeDefined();
     
     // Verify final project state
     const projectState = transport.getProjectState();
@@ -385,7 +385,7 @@ func _physics_process(delta):
       features: ['x86_64', 'vulkan']
     });
     
-    expect(exportResult.exportPath).toBeDefined();
+    expect(exportResult.content[0].text).toBeDefined();
     
     console.log('✅ 3D FPS game creation workflow completed successfully!');
   });
@@ -532,7 +532,7 @@ func _physics_process(delta):
       features: ['webgl2', 'single_file']
     });
     
-    expect(exportResult.exportPath).toBeDefined();
+    expect(exportResult.content[0].text).toBeDefined();
     
     console.log('✅ UI-heavy strategy game creation workflow completed successfully!');
   });

@@ -103,7 +103,7 @@ export class ToolRegistry {
           if (
             tool.id.toLowerCase().includes(searchQuery) ||
             tool.name.toLowerCase().includes(searchQuery) ||
-            tool.description.toLowerCase().includes(searchQuery) ||
+            (tool.description || '').toLowerCase().includes(searchQuery) ||
             tool.category.toLowerCase().includes(searchQuery)
           ) {
             results.push({
@@ -233,7 +233,7 @@ export class ToolRegistry {
       if (
         tool.id.toLowerCase().includes(searchQuery) ||
         tool.name.toLowerCase().includes(searchQuery) ||
-        tool.description.toLowerCase().includes(searchQuery) ||
+        (tool.description || '').toLowerCase().includes(searchQuery) ||
         tool.category.toLowerCase().includes(searchQuery)
       ) {
         results.push(tool);
