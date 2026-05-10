@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
+import { isPathSafe, sanitizeUserArguments } from '../../utils/security.js';
 
 const runProjectSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -43,8 +44,14 @@ export function createRunProjectTool(_transport: Transport): RegisteredTool {
         case 'run': {
           const validated = runProjectSchema.parse(data);
           
+          // Validate user-provided project path
+          if (!isPathSafe(validated.projectPath)) {
+            throw new Error('Invalid project path: path cannot start with a hyphen to prevent flag injection');
+          }
+
           let command = 'godot';
-          const args = validated.args || [];
+          const safeArgs = sanitizeUserArguments(validated.args || []);
+          const args = [...safeArgs];
           
           if (validated.platform === 'editor') {
             // Run in editor

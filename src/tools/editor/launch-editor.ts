@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
-
+import { isPathSafe, isValidExecutable, sanitizeUserArguments } from '../../utils/security.js';
 
 const launchEditorSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -43,15 +43,24 @@ export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
         case 'launch': {
           const validated = launchEditorSchema.parse(data);
           
+          // Validate user-provided project path
+          if (!isPathSafe(validated.projectPath)) {
+            throw new Error('Invalid project path: path cannot start with a hyphen to prevent flag injection');
+          }
+
           // Auto-detect Godot editor path if not provided
           let editorExecutable = validated.editorPath;
-          if (!editorExecutable) {
+          if (editorExecutable) {
+            if (!isValidExecutable(editorExecutable)) {
+              throw new Error('Invalid editor executable: must be a Godot binary');
+            }
+          } else {
             editorExecutable = 'godot';
           }
           
           // Build command arguments
-          const args = validated.args || [];
-          const fullArgs = [validated.projectPath, ...args];
+          const safeArgs = sanitizeUserArguments(validated.args || []);
+          const fullArgs = [validated.projectPath, ...safeArgs];
           
           // Launch editor
           editorProcess = spawn(editorExecutable, fullArgs, {
