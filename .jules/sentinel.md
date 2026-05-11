@@ -1,0 +1,6 @@
+## 2024-05-11 - Command Injection Vulnerability via Command Line Flags
+**Vulnerability:** The project execution tools use child_process `spawn` to run the Godot executable, taking the `projectPath` as a positional argument. Because `projectPath` comes from untrusted user input and isn't validated to ensure it isn't a flag (e.g., `-s`, `--script`), it allows an attacker to perform command injection by providing a project path that starts with a hyphen (like `--script=malicious.gd`).
+
+**Learning:** When using `spawn` or `exec` with a dynamic path passed as an argument, you should ensure the arguments do not start with hyphens to prevent flag injection. Even an absolute/relative path that is intended to be a file location could be parsed as an option. In Node.js `child_process.spawn`, you can also use `--` to indicate the end of options before positional arguments, but validating the path string is a good defense-in-depth practice.
+
+**Prevention:** To prevent this, paths and user-provided argument strings should be validated. Added `security.ts` with utilities such as `isPathSafe` to check if paths start with a `-`, and `sanitizeUserArguments` to block flags like `--script`, `-s`, `--export`. Using `--` before positional arguments in Godot commands (if supported by Godot) or using absolute paths to prevent strings starting with `-` are both robust fixes.

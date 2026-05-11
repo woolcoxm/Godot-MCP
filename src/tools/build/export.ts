@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
+import { isPathSafe } from '../../utils/security.js';
 
 const exportPresetSchema = z.object({
   presetName: z.string().describe('Name for the export preset'),
@@ -115,6 +116,14 @@ async function handleBuildProject(
   transport: Transport
 ): Promise<{ content: Array<{ type: 'text'; text: string }> }> {
   try {
+    // Validate security limits
+    if (args.presetName && !isPathSafe(args.presetName)) {
+      throw new Error(`Invalid preset name: ${args.presetName}`);
+    }
+    if (args.exportPath && !isPathSafe(args.exportPath)) {
+      throw new Error(`Invalid export path: ${args.exportPath}`);
+    }
+
     // Build command for headless export
     // Note: This would require Godot to be installed and in PATH
     let buildCommand = 'godot --headless --export';
