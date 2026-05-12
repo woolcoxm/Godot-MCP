@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
+import { isPathSafe, isValidExecutable, sanitizeUserArguments } from '../../utils/security.js';
 
 
 const launchEditorSchema = z.object({
@@ -43,15 +44,26 @@ export function createLaunchEditorTool(_transport: Transport): RegisteredTool {
         case 'launch': {
           const validated = launchEditorSchema.parse(data);
           
+          // Validate project path to prevent flag injection
+          if (!isPathSafe(validated.projectPath)) {
+            throw new Error(`Invalid project path: cannot start with '-'`);
+          }
+
           // Auto-detect Godot editor path if not provided
           let editorExecutable = validated.editorPath;
           if (!editorExecutable) {
             editorExecutable = 'godot';
           }
           
-          // Build command arguments
-          const args = validated.args || [];
-          const fullArgs = [validated.projectPath, ...args];
+          // Validate executable to prevent arbitrary command execution
+          if (!isValidExecutable(editorExecutable)) {
+            throw new Error(`Invalid executable: must be a Godot binary`);
+          }
+
+          // Build command arguments and sanitize them
+          const userArgs = validated.args || [];
+          const safeUserArgs = sanitizeUserArguments(userArgs);
+          const fullArgs = [validated.projectPath, ...safeUserArgs];
           
           // Launch editor
           editorProcess = spawn(editorExecutable, fullArgs, {
