@@ -393,14 +393,22 @@ export function createAnalyzeScriptTool(transport: Transport): RegisteredTool {
         }
       }
 
+      // ⚡ Bolt: Single-pass loop to count issues by type instead of 3 filter calls
+      let warnings = 0, errors = 0, info = 0;
+      for (const issue of analysis.issues) {
+        if (issue.type === 'warning') warnings++;
+        else if (issue.type === 'error') errors++;
+        else if (issue.type === 'info') info++;
+      }
+
       return {
         scriptPath: args.scriptPath,
         analysis,
         summary: {
           totalIssues: analysis.issues.length,
-          warnings: analysis.issues.filter(i => i.type === 'warning').length,
-          errors: analysis.issues.filter(i => i.type === 'error').length,
-          info: analysis.issues.filter(i => i.type === 'info').length,
+          warnings,
+          errors,
+          info,
           metrics: analysis.metrics,
         },
         message: `Analyzed ${args.scriptPath}: ${analysis.issues.length} issues found`,
