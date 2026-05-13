@@ -1,0 +1,4 @@
+## 2025-05-13 - Command Injection in Launch Editor Tool
+**Vulnerability:** The `LaunchEditor` and `RunProject` tools use `child_process.spawn()` to execute user-provided commands without properly sanitizing arguments to prevent flag injection (e.g. passing `-s` or `--script` to execute arbitrary GDScript, or modifying Godot paths).
+**Learning:** `spawn()` prevents traditional shell command injection (e.g., `&& rm -rf /`), but it does not prevent flag injection if user input is passed as arguments directly to the executable. An attacker could provide a malicious `projectPath` starting with a hyphen (e.g. `--script=malicious.gd`) or malicious `args`.
+**Prevention:** Validate that all user-provided arguments, especially paths, do not start with a hyphen (`-`), and explicitly reject prohibited flags like `--script` or `--headless` when executing commands on behalf of users.
