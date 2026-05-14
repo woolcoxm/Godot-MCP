@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { RegisteredTool } from '../registry.js';
 import { Transport } from '../../transports/transport.js';
 import { spawn } from 'child_process';
+import { isPathSafe, sanitizeUserArguments } from '../../utils/security.js';
 
 const runProjectSchema = z.object({
   projectPath: z.string().describe('Path to the Godot project directory'),
@@ -43,31 +44,36 @@ export function createRunProjectTool(_transport: Transport): RegisteredTool {
         case 'run': {
           const validated = runProjectSchema.parse(data);
           
+          // Security validation
+          if (!isPathSafe(validated.projectPath)) {
+            throw new Error(`Security Error: Invalid project path '${validated.projectPath}'`);
+          }
+
           let command = 'godot';
-          const args = validated.args || [];
+          const safeArgs = sanitizeUserArguments(validated.args || []);
           
           if (validated.platform === 'editor') {
             // Run in editor
             command = 'godot';
-            args.unshift('--editor', validated.projectPath);
+            safeArgs.unshift('--editor', validated.projectPath);
           } else if (validated.exportPreset) {
             // Export and run
             // In a real implementation, we would export first then run the exported binary
             command = 'godot';
-            args.unshift('--export', validated.exportPreset, validated.projectPath);
+            safeArgs.unshift('--export', validated.exportPreset, validated.projectPath);
           } else {
             // Run project directly
             command = 'godot';
-            args.unshift(validated.projectPath);
+            safeArgs.unshift(validated.projectPath);
           }
           
           // Add platform-specific arguments
           if (validated.platform && validated.platform !== 'editor') {
-            args.push(`--platform=${validated.platform}`);
+            safeArgs.push(`--platform=${validated.platform}`);
           }
           
           // Launch project
-          projectProcess = spawn(command, args, {
+          projectProcess = spawn(command, safeArgs, {
             stdio: 'inherit',
             detached: true,
           });
