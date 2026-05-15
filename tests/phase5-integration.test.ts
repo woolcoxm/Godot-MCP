@@ -41,6 +41,8 @@ class MockTransport extends Transport {
   }
 }
 
+import { registerAllTools } from '../src/tools/register-tools';
+
 describe('Phase 5: Advanced Systems Integration', () => {
   let registry: ToolRegistry;
   let transport: MockTransport;
@@ -51,8 +53,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
     transport = new MockTransport();
     
     // Import and register all tools
-    // Note: In a real test, we would import the actual registerAllTools function
-    // For this integration test, we'll test the tool definitions directly
+    registerAllTools(registry, transport);
   });
   
   it('should have UI tool categories defined', () => {
