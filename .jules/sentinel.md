@@ -1,0 +1,4 @@
+## 2024-05-15 - [Fix Command Injection in Editor Tools]
+**Vulnerability:** Command/Argument injection in `godot_launch_editor` and `godot_run_project` tools via Node's `child_process.spawn`. User-supplied paths and arguments were concatenated without proper validation or sanitization, allowing arbitrary flag injection (e.g., `--script`) which could lead to remote code execution (RCE).
+**Learning:** Even when using `spawn` with an array of arguments (which avoids shell injection), argument injection is still a critical risk if the target executable supports flags that can execute code or read/write arbitrary files.
+**Prevention:** Always validate that paths do not start with a hyphen (`-`) and explicitly sanitize user-provided arguments against a strict list of prohibited flags before passing them to child processes.
