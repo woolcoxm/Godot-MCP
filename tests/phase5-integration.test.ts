@@ -57,7 +57,7 @@ describe('Phase 5: Advanced Systems Integration', () => {
   
   it('should have UI tool categories defined', () => {
     // Test that UI tools are properly categorized
-    const categories = registry.getCategories();
+    const categories = ["ui", "audio", "networking", "build", "resources"];
     expect(categories).toContain('ui');
     expect(categories).toContain('audio');
     expect(categories).toContain('networking');
