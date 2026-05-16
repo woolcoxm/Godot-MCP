@@ -1,0 +1,3 @@
+## 2024-05-16 - Using Native UI Dialogs for Background Plugin Status
+**Learning:** Developers often forget that background plugin status commands (like "Show Status") logged to the standard console might be entirely missed if the user has the output panel collapsed or is focused on other Godot editor tabs.
+**Action:** When creating user-triggered status commands in Godot plugins, use native editor dialogs (like `AcceptDialog`) instead of `print()` to ensure immediate and obvious visibility. Connect `confirmed` and `canceled` signals to `queue_free()` to prevent UI memory leaks.
